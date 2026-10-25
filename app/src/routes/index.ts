@@ -10,7 +10,20 @@ const createClaimSchema = z.object({
   amount: z.number().positive(),
 });
 
+import { register } from '../metrics';
+
 const router = Router();
+
+// GET /metrics (Prometheus scrape endpoint)
+router.get('/metrics', async (_req: Request, res: Response) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (err) {
+    logger.error({ err }, 'Failed to generate metrics');
+    res.status(500).end();
+  }
+});
 
 // GET /health
 router.get('/health', async (_req: Request, res: Response) => {

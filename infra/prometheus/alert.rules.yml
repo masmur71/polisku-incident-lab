@@ -1,0 +1,29 @@
+groups:
+  - name: polisku_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: (sum(rate(polisku_http_requests_total{status_code=~"5.."}[2m])) or vector(0)) / (sum(rate(polisku_http_requests_total[2m])) > 0) * 100 > 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High HTTP 5xx error rate detected (>5%)"
+          description: "HTTP 5xx error rate is currently at {{ $value | printf \"%.2f\" }}% over the last 2 minutes."
+
+      - alert: HighHeapMemoryUsage
+        expr: (polisku_nodejs_heap_size_used_bytes / polisku_nodejs_heap_size_total_bytes) * 100 > 85
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node.js Heap memory usage above 85%"
+          description: "App memory usage has exceeded 85% of allocated heap for more than 1 minute."
+
+      - alert: DatabasePoolExhausted
+        expr: polisku_pg_pool_waiting_connections > 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL connection pool exhausted"
+          description: "{{ $value }} requests are queued waiting for a database connection."

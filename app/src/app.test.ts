@@ -93,3 +93,14 @@ describe('GET /claims', () => {
     }
   });
 });
+
+describe('GET /metrics', () => {
+  it('should expose prometheus metrics', async () => {
+    const res = await request(app).get('/metrics');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('polisku_http_requests_total');
+    expect(res.text).toContain('polisku_pg_pool_total_connections');
+    expect(res.text).toContain('polisku_http_request_duration_seconds');
+  });
+});
+
