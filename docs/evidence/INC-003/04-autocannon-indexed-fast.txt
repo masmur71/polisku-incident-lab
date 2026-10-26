@@ -1,0 +1,34 @@
+================================================================================
+AUTOCANNON BENCHMARK: INDEXED FAST QUERY (INC-003 AFTER)
+Target: http://localhost:3000/claims?status=PENDING
+Concurrency: 40 connections, Pipelining: 5, Duration: 15s
+Condition: Composite Index Created (idx_claims_status_filed_at ON claims(status, filed_at DESC))
+================================================================================
+
+Running 15s test @ http://localhost:3000/claims?status=PENDING
+40 connections with 5 pipelining factor
+
+┌─────────┬────────┬────────┬────────┬────────┬───────────┬──────────┬─────────┐
+│ Stat    │ 2.5%   │ 50%    │ 97.5%  │ 99%    │ Avg       │ Stdev    │ Max     │
+├─────────┼────────┼────────┼────────┼────────┼───────────┼──────────┼─────────┤
+│ Latency │ 315 ms │ 360 ms │ 450 ms │ 567 ms │ 369.83 ms │ 55.14 ms │ 1005 ms │
+└─────────┴────────┴────────┴────────┴────────┴───────────┴──────────┴─────────┘
+┌───────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐
+│ Stat      │ 1%      │ 2.5%    │ 50%     │ 97.5%   │ Avg     │ Stdev   │ Min     │
+├───────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
+│ Req/Sec   │ 312     │ 312     │ 555     │ 611     │ 534.4   │ 71.16   │ 312     │
+├───────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────────┤
+│ Bytes/Sec │ 5.74 MB │ 5.74 MB │ 10.2 MB │ 11.2 MB │ 9.83 MB │ 1.31 MB │ 5.74 MB │
+└───────────┴─────────┴─────────┴─────────┴─────────┴─────────┴─────────┴─────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 15
+
+8k requests in 15.09s, 148 MB read
+
+--------------------------------------------------------------------------------
+Key Post-Resolution Metrics:
+- Execution time per DB query dropped from 118.829 ms to 0.349 ms (340x faster).
+- Average HTTP latency dropped from 1,926.47 ms to 369.83 ms (-80.8% reduction).
+- p99 HTTP latency dropped from 2,460 ms to 567 ms (-77.0% reduction).
+- Request throughput jumped from 97.87 req/s to 534.4 req/s (+446% throughput boost).

@@ -1,0 +1,35 @@
+================================================================================
+AUTOCANNON INCIDENT TRAFFIC BENCHMARK RESULT (INC-001)
+Target: http://localhost:3000/health
+Concurrency: 10 connections, Pipelining: 10, Duration: 15s
+Condition: Connection Pool Exhausted (10 connections checked out and unreleased)
+================================================================================
+
+Running 15s test @ http://localhost:3000/health
+10 connections with 10 pipelining factor
+
+┌─────────┬─────────┬─────────┬─────────┬─────────┬────────────┬──────────┬─────────┐
+│ Stat    │ 2.5%    │ 50%     │ 97.5%   │ 99%     │ Avg        │ Stdev    │ Max     │
+├─────────┼─────────┼─────────┼─────────┼─────────┼────────────┼──────────┼─────────┤
+│ Latency │ 5090 ms │ 5111 ms │ 5187 ms │ 5190 ms │ 5121.28 ms │ 28.69 ms │ 5191 ms │
+└─────────┴─────────┴─────────┴─────────┴─────────┴────────────┴──────────┴─────────┘
+┌───────────┬─────┬──────┬─────┬─────────┬─────────┬─────────┬───────┐
+│ Stat      │ 1%  │ 2.5% │ 50% │ 97.5%   │ Avg     │ Stdev   │ Min   │
+├───────────┼─────┼──────┼─────┼─────────┼─────────┼─────────┼───────┤
+│ Req/Sec   │ 0   │ 0    │ 0   │ 100     │ 13.34   │ 33.8    │ 1     │
+├───────────┼─────┼──────┼─────┼─────────┼─────────┼─────────┼───────┤
+│ Bytes/Sec │ 0 B │ 0 B  │ 0 B │ 30.3 kB │ 4.04 kB │ 10.2 kB │ 303 B │
+└───────────┴─────┴──────┴─────┴─────────┴─────────┴─────────┴───────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 15
+
+0 2xx responses, 200 non 2xx responses
+300 requests in 15.19s, 60.6 kB read
+
+--------------------------------------------------------------------------------
+Key Observations:
+- Baseline latency: p50 = 11 ms, p99 = 127 ms (at 10 connections).
+- Incident latency: p50 = 5111 ms, p99 = 5190 ms (jumped 40x - 460x!).
+- Success rate: 0.00% (0 of 200 responses were 2xx; all returned HTTP 503 Service Unavailable).
+- Root mechanism: Pool timeout exceeded (PG_CONN_TIMEOUT = 5000 ms).

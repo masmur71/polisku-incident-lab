@@ -2,6 +2,7 @@ import express from 'express';
 import pinoHttp from 'pino-http';
 import logger from './logger';
 import routes from './routes';
+import simulationsRouter from './routes/simulations';
 import { metricsMiddleware } from './metrics';
 
 const app = express();
@@ -24,5 +25,6 @@ app.use(metricsMiddleware);
 
 // Routes
 app.use(routes);
+app.use('/simulations', simulationsRouter);
 
 export default app;

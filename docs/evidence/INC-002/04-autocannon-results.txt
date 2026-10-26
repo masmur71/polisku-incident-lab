@@ -1,0 +1,36 @@
+================================================================================
+AUTOCANNON BENCHMARK UNDER MEMORY LEAK PRESSURE (INC-002)
+Target: http://localhost:3000/policies/1
+Concurrency: 20 connections, Pipelining: 5, Duration: 15s
+Condition: Leaked Array Store with 48,000 retained objects (RSS: 111.69 MB)
+================================================================================
+
+Running 15s test @ http://localhost:3000/policies/1
+20 connections with 5 pipelining factor
+
+┌─────────┬───────┬───────┬────────┬────────┬─────────┬──────────┬────────┐
+│ Stat    │ 2.5%  │ 50%   │ 97.5%  │ 99%    │ Avg     │ Stdev    │ Max    │
+├─────────┼───────┼───────┼────────┼────────┼─────────┼──────────┼────────┤
+│ Latency │ 57 ms │ 82 ms │ 161 ms │ 178 ms │ 88.3 ms │ 28.77 ms │ 326 ms │
+└─────────┴───────┴───────┴────────┴────────┴─────────┴──────────┴────────┘
+┌───────────┬────────┬────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Stat      │ 1%     │ 2.5%   │ 50%    │ 97.5%  │ Avg      │ Stdev  │ Min    │
+├───────────┼────────┼────────┼────────┼────────┼──────────┼────────┼────────┤
+│ Req/Sec   │ 544    │ 544    │ 1.193  │ 1.312  │ 1.123,54 │ 220,7  │ 544    │
+├───────────┼────────┼────────┼────────┼────────┼──────────┼────────┼────────┤
+│ Bytes/Sec │ 290 kB │ 290 kB │ 635 kB │ 698 kB │ 598 kB   │ 117 kB │ 289 kB │
+└───────────┴────────┴────────┴────────┴────────┴──────────┴────────┴────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 15
+
+17k requests in 15.07s, 8.97 MB read
+
+--------------------------------------------------------------------------------
+Key Diagnostic Insights:
+1. RSS expanded from 61.52 MB to 111.69 MB (+81.5% growth).
+2. Heap Used expanded from 12.08 MB to 24.46 MB (+102.5% growth).
+3. Heap Total expanded to 27.04 MB.
+4. GC events escalated: V8 Scavenge (minor GC) and Mark-Sweep-Compact (major GC)
+   frequency increased to attempt cleaning the unreclaimable objects.
+5. V8 Heap Snapshot generated successfully (33,000,247 bytes) via SIGUSR2 signal.

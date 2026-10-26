@@ -1,0 +1,34 @@
+================================================================================
+AUTOCANNON BENCHMARK: UNINDEXED SLOW QUERY (INC-003 BEFORE)
+Target: http://localhost:3000/claims?status=PENDING
+Concurrency: 40 connections, Pipelining: 5, Duration: 15s
+Condition: No index on claims.status (Sequential Scan on 429,191 rows)
+================================================================================
+
+Running 15s test @ http://localhost:3000/claims?status=PENDING
+40 connections with 5 pipelining factor
+
+┌─────────┬────────┬─────────┬─────────┬─────────┬────────────┬──────────┬─────────┐
+│ Stat    │ 2.5%   │ 50%     │ 97.5%   │ 99%     │ Avg        │ Stdev    │ Max     │
+├─────────┼────────┼─────────┼─────────┼─────────┼────────────┼──────────┼─────────┤
+│ Latency │ 820 ms │ 1967 ms │ 2266 ms │ 2460 ms │ 1926.47 ms │ 303.7 ms │ 2590 ms │
+└─────────┴────────┴─────────┴─────────┴─────────┴────────────┴──────────┴─────────┘
+┌───────────┬─────────┬─────────┬─────────┬─────────┬────────┬────────┬─────────┐
+│ Stat      │ 1%      │ 2.5%    │ 50%     │ 97.5%   │ Avg    │ Stdev  │ Min     │
+├───────────┼─────────┼─────────┼─────────┼─────────┼────────┼────────┼─────────┤
+│ Req/Sec   │ 55      │ 55      │ 102     │ 111     │ 97.87  │ 13.23  │ 55      │
+├───────────┼─────────┼─────────┼─────────┼─────────┼────────┼────────┼─────────┤
+│ Bytes/Sec │ 1.01 MB │ 1.01 MB │ 1.88 MB │ 2.04 MB │ 1.8 MB │ 244 kB │ 1.01 MB │
+└───────────┴─────────┴─────────┴─────────┴─────────┴────────┴────────┴─────────┘
+
+Req/Bytes counts sampled once per second.
+# of samples: 15
+
+2k requests in 15.21s, 27 MB read
+
+--------------------------------------------------------------------------------
+Key Observations (Before Indexing):
+- Average latency is 1,926 ms (~1.93 seconds!).
+- p99 latency reaches 2,460 ms (~2.46 seconds!).
+- PostgreSQL CPU is consumed by Parallel Seq Scan over 429,191 records.
+- 10-connection pool causes severe queueing when 40 clients request concurrently.
