@@ -1,0 +1,11 @@
+================================================================================
+PROMETHEUS IN-FLIGHT REQUESTS METRIC (INC-005)
+Metric: polisku_http_in_flight_requests
+================================================================================
+
+# HELP polisku_http_in_flight_requests Current number of HTTP requests being processed
+# TYPE polisku_http_in_flight_requests gauge
+polisku_http_in_flight_requests 10
+
+Key Insight:
+During the incident, the in-flight requests gauge jumped to 10 and stayed saturated for the entire duration of the downstream hang, confirming that active sockets and worker connections were trapped waiting for external I/O.

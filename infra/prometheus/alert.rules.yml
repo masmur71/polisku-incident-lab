@@ -27,3 +27,12 @@ groups:
         annotations:
           summary: "PostgreSQL connection pool exhausted"
           description: "{{ $value }} requests are queued waiting for a database connection."
+
+      - alert: DiskSpaceUsageAbove80
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 80
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk space usage above 80%"
+          description: "Storage filesystem usage has exceeded 80% capacity."

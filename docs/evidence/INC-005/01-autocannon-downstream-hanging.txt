@@ -1,0 +1,19 @@
+================================================================================
+AUTOCANNON BENCHMARK: DOWNSTREAM TIMEOUT UNHANDLED (INC-005 BEFORE)
+Target: http://localhost:3000/simulations/external-claim-verification
+Concurrency: 10 connections, Duration: 15s
+Condition: No timeout configured on downstream HTTP client (Partner API delays 12s)
+================================================================================
+
+Running 15s test @ http://localhost:3000/simulations/external-claim-verification
+10 connections
+
+20 requests in 15.19s, 0 B read
+10 errors (10 timeouts)
+
+--------------------------------------------------------------------------------
+Key Diagnostic Observations:
+1. Every incoming client request blocked waiting for the unresponsive downstream service (delay 12s).
+2. All 10 client connections timed out at the benchmark client gateway.
+3. Throughput crashed to 0.00 req/s.
+4. Server socket file descriptors remained open, causing socket starvation and memory retention.

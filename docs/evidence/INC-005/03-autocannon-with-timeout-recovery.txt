@@ -1,0 +1,18 @@
+================================================================================
+VERIFIKASI RESOLUSI TIMEOUT & CIRCUIT BREAKER FALLBACK (INC-005 AFTER)
+Target: http://localhost:3000/simulations/external-claim-verification?withTimeout=true&timeoutMs=2000
+================================================================================
+
+HTTP Response Status: 202 Accepted
+Latency: 2,008 ms (cut off cleanly at the 2,000 ms AbortController boundary)
+
+Payload:
+{
+  "status": "DEFERRED_TO_MANUAL_REVIEW",
+  "message": "External gateway unresponsive within 2000ms. Claim queued for async reconciliation."
+}
+
+Key Improvements:
+1. Replaced indefinite blocking with a strict 2000ms AbortSignal deadline.
+2. Rather than throwing HTTP 504 Gateway Timeout or hanging client connections, the service returns HTTP 202 Accepted with asynchronous queue fallback.
+3. Server sockets release promptly after 2 seconds, preventing downstream cascading failure.

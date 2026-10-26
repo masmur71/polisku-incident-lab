@@ -55,13 +55,31 @@ export const poolWaitingConnections = new client.Gauge({
 });
 register.registerMetric(poolWaitingConnections);
 
+// HTTP In-flight requests gauge
+export const httpInFlightRequests = new client.Gauge({
+  name: 'polisku_http_in_flight_requests',
+  help: 'Current number of HTTP requests being processed',
+});
+register.registerMetric(httpInFlightRequests);
+
 // Middleware to track HTTP metrics
 export const metricsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (req.path === '/metrics') {
     return next();
   }
 
+  httpInFlightRequests.inc();
   const start = process.hrtime();
+  let decremented = false;
+
+  const onComplete = () => {
+    if (!decremented) {
+      httpInFlightRequests.dec();
+      decremented = true;
+    }
+  };
+
+  res.on('close', onComplete);
 
   res.on('finish', () => {
     const diff = process.hrtime(start);

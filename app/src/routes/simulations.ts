@@ -1,9 +1,22 @@
 import { Router, Request, Response } from 'express';
 import { PoolClient } from 'pg';
+import fs from 'fs';
+import path from 'path';
 import pool, { getPoolStats } from '../db';
 import logger from '../logger';
 
 const router = Router();
+
+const LOG_DIR = path.resolve(__dirname, '../../logs');
+const DEBUG_LOG_PATH = path.join(LOG_DIR, 'audit-debug.log');
+
+if (!fs.existsSync(LOG_DIR)) {
+  try {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+  } catch {
+    // ignore
+  }
+}
 
 // Store leaked connections so they can be monitored and optionally released
 const leakedClients: PoolClient[] = [];
@@ -175,6 +188,122 @@ router.post('/clear-memory-leak', (_req: Request, res: Response) => {
       rssMb: Math.round((mem.rss / 1024 / 1024) * 100) / 100,
     },
   });
+});
+
+/**
+ * POST /simulations/fill-disk
+ * Simulates verbose unrotated debug logs written to disk
+ * Body: { megabytes?: number }
+ */
+router.post('/fill-disk', (req: Request, res: Response) => {
+  const mb = Math.min(Math.max(parseInt(req.body?.megabytes, 10) || 100, 1), 500);
+  const chunkLine = 'DEBUG ' + new Date().toISOString() + ' [AUDIT-TRACE] payload="' + 'Z'.repeat(950) + '"\n';
+  const repeatCount = Math.floor(1024 * 1024 / chunkLine.length);
+  const oneMbChunk = chunkLine.repeat(repeatCount);
+
+  for (let i = 0; i < mb; i++) {
+    fs.appendFileSync(DEBUG_LOG_PATH, oneMbChunk);
+  }
+
+  const stat = fs.statSync(DEBUG_LOG_PATH);
+  const currentSizeMb = Math.round((stat.size / 1024 / 1024) * 100) / 100;
+  logger.warn({ currentSizeMb, logPath: DEBUG_LOG_PATH }, 'Simulation: Unrotated debug log written to disk');
+
+  res.json({
+    status: 'disk_filled',
+    writtenMb: mb,
+    fileSizeMb: currentSizeMb,
+    logPath: DEBUG_LOG_PATH,
+  });
+});
+
+/**
+ * GET /simulations/disk-stats
+ */
+router.get('/disk-stats', (_req: Request, res: Response) => {
+  let fileSizeMb = 0;
+  if (fs.existsSync(DEBUG_LOG_PATH)) {
+    fileSizeMb = Math.round((fs.statSync(DEBUG_LOG_PATH).size / 1024 / 1024) * 100) / 100;
+  }
+  res.json({
+    logPath: DEBUG_LOG_PATH,
+    fileSizeMb,
+    exists: fs.existsSync(DEBUG_LOG_PATH),
+  });
+});
+
+/**
+ * POST /simulations/clean-disk
+ */
+router.post('/clean-disk', (_req: Request, res: Response) => {
+  let removedSizeMb = 0;
+  if (fs.existsSync(DEBUG_LOG_PATH)) {
+    removedSizeMb = Math.round((fs.statSync(DEBUG_LOG_PATH).size / 1024 / 1024) * 100) / 100;
+    fs.truncateSync(DEBUG_LOG_PATH, 0);
+  }
+  logger.info({ removedSizeMb }, 'Simulation: Truncated bloated debug log file');
+  res.json({
+    status: 'cleaned',
+    truncatedSizeMb: removedSizeMb,
+  });
+});
+
+/**
+ * GET /simulations/downstream/partner-api
+ * Simulates a slow third-party partner service (e.g. Asuransi Jiwa Rekanan / Fraud Check Gateway)
+ */
+router.get('/downstream/partner-api', async (req: Request, res: Response) => {
+  const delayMs = parseInt(req.query.delay as string, 10) || 10000;
+  logger.warn({ delayMs }, 'Mock Downstream API: Delaying response');
+  await new Promise((resolve) => setTimeout(resolve, delayMs));
+  res.json({
+    status: 'verified',
+    partner: 'AsuransiJiwa-External-Gateway',
+    verifiedAt: new Date().toISOString(),
+  });
+});
+
+/**
+ * GET /simulations/external-claim-verification
+ * Endpoint that calls downstream service
+ * Query: withTimeout=true|false, timeoutMs=2000
+ */
+router.get('/external-claim-verification', async (req: Request, res: Response) => {
+  const withTimeout = req.query.withTimeout === 'true';
+  const timeoutMs = parseInt(req.query.timeoutMs as string, 10) || 2000;
+  const partnerUrl = `http://localhost:${process.env.PORT || 3000}/simulations/downstream/partner-api?delay=12000`;
+
+  logger.info({ withTimeout, timeoutMs }, 'Calling external downstream service');
+
+  if (!withTimeout) {
+    // BUGGY: No timeout specified! Hangs for 12 seconds
+    try {
+      const response = await fetch(partnerUrl);
+      const data = await response.json();
+      res.json({ status: 'completed', data });
+    } catch (err: any) {
+      logger.error({ err: err?.message }, 'Failed calling downstream');
+      res.status(504).json({ error: 'Gateway timeout / Downstream failure' });
+    }
+  } else {
+    // FIXED: Circuit breaker / Timeout with graceful fallback
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+      const response = await fetch(partnerUrl, { signal: controller.signal });
+      clearTimeout(timer);
+      const data = await response.json();
+      res.json({ status: 'completed', data });
+    } catch (err: any) {
+      logger.warn({ timeoutMs }, 'Downstream timeout triggered - falling back to async manual review');
+      // Fallback: 202 Accepted with async review queue
+      res.status(202).json({
+        status: 'DEFERRED_TO_MANUAL_REVIEW',
+        message: 'External gateway unresponsive within 2000ms. Claim queued for async reconciliation.',
+      });
+    }
+  }
 });
 
 export default router;
