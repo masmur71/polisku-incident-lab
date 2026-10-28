@@ -11,17 +11,21 @@ Sebanyak 64.000 objek ditahan lalu referensinya dibersihkan. Before/during/after
 
 ## Hipotesis dan diagnosis
 
-Array modul menahan objek reachable. Padding string dapat berbagi penyimpanan; jumlah objek dikalikan sizeKb bukan retained heap terukur.
+Heap used berubah 17,77 → 31,31 → 29,96 MiB, sementara jumlah referensi 0 → 64000 → 0. Pertumbuhan ini konsisten dengan objek yang disimpan pada array modul; padding string dapat berbagi penyimpanan, sehingga items × sizeKb bukan ukuran retained heap.
 
-Hipotesis pembanding: database mati, pool habis, query tidak efisien, alokasi memori biasa, atau partner lambat. Pilih berdasarkan gejala insiden dan cocokkan statistik runtime dengan hasil CLI. Hipotesis di laporan ini direkonstruksi saat review, bukan catatan bertimestamp sebelum injeksi. Run berikutnya harus mencatat prediksi sebelum injeksi sesuai [runbook](../runbook.md).
+Alternatif alokasi sementara belum dapat dibedakan hanya dari satu sampel heap. Counter referensi dan kode injeksi menunjukkan retensi yang disengaja, tetapi analisis dominator/retainer belum dipublikasikan. Sesudah clear, RSS 83,52 MiB belum kembali ke 67,8 MiB awal; hasil membuktikan pelepasan referensi, bukan pemulihan seluruh memori proses.
+
+Penjelasan ini merupakan rekonstruksi dari artefak dan kode saat review, bukan catatan hipotesis sebelum injeksi. Run berikutnya perlu mencatat prediksi dan keputusan saat kejadian sesuai [runbook](../runbook.md).
 
 ## Root cause dan recovery
 
-Array modul menahan objek reachable. Padding string dapat berbagi penyimpanan; jumlah objek dikalikan sizeKb bukan retained heap terukur.
+Array modul mempertahankan objek yang masih reachable. Membersihkan array melepaskan referensi aplikasi; garbage collector dan allocator menentukan kapan heap/RSS berubah.
 
 Mitigasi: `POST /simulations/clear-memory-leak`. Jalankan reset sebelum pindah skenario. Reset akhir memverifikasi health, baca polis, persistensi klaim uji dan pembersihan klaim uji, state fault kosong, serta target aplikasi Prometheus UP. Data lama dipertahankan. Reset default memilih baseline tanpa index; `--indexed` memilih kondisi query sesudah perbaikan.
 
 ## Bukti
+
+[Indeks run dan waktu observasi](../evidence/revalidation/README.md). Timestamp artefak bukan waktu deteksi manusia atau MTTR.
 
 - [INC-002-memory.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/INC-002-memory.json)
 - [summary.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/summary.json)
@@ -31,9 +35,8 @@ Mitigasi: `POST /simulations/clear-memory-leak`. Jalankan reset sebelum pindah s
 
 | Tindakan | Owner latihan | Status |
 |---|---|---|
-| Mode lab eksplisit, port localhost, deadline dan batas sumber daya | Pemilik repo | Diimplementasikan dan diuji lokal |
-| Reproduksi dan verifikasi transaksi setelah recovery | Pemilik repo | Lulus verify-lab.js |
-| Host exporter, notifikasi eksternal dan cloud | Pemilik repo | Belum dilakukan |
+| Publikasikan screenshot dominator/retainer dengan data dummy | Pemilik repo | Pending; snapshot mentah tetap lokal |
+| Ulangi beban terkontrol untuk membedakan retensi, GC dan latency | Pemilik repo | Pending; alert heap baru diuji sintetis |
 
 Snapshot historis 33 MB tetap lokal. Belum ada screenshot retainer DevTools untuk publik. Referensi kosong tidak menjamin RSS langsung turun; penyebab latensi akibat GC belum dibuktikan dengan kontrol beban. Alert heap baru diuji sintetis dengan promtool, tidak dipaksa firing live.
 

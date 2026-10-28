@@ -1,12 +1,14 @@
 # Baseline lokal — 28 Oktober 2026
 
-Sumber angka: [JSON asli](../loadtest/baseline-results.json). Hasil ini menggantikan tabel 26 Oktober yang memiliki angka berbeda dari artefaknya. Baseline-light.json adalah salinan profil ringan dari run yang sama.
+Sumber angka: [JSON asli](../loadtest/baseline-results.json). Hasil ini menggantikan tabel 26 Oktober yang memiliki angka berbeda dari artefaknya. Seri acuan terdiri dari runId 2026-10-28T10:58:18.989Z (light), 10:59:29.394Z (medium), dan 11:00:39.990Z (heavy). Timestamp UTC; WIB = UTC+7. Metadata mencatat HEAD 0d1f6fc dan workingTreeDirty=true saat pengukuran, sebelum hasil di-commit.
 
 | Profil | Koneksi / durasi | Respons | RPS rata-rata | p50 ms | p97.5 ms | p99 ms | Error / timeout / non-2xx |
-|---|---|---|---|---|---|---|---|---|
-| light | 10 / 30s | 6309 | 210.3 | 21 | 167 | 192 | 0 / 0 / 0 |
-| medium | 50 / 60s | 15211 | 253.52 | 141 | 509 | 565 | 0 / 0 / 0 |
-| heavy | 150 / 60s | 14672 | 244.54 | 506 | 1417 | 1619 | 0 / 0 / 0 |
+|---|---|---|---|---|---|---|---|
+| light | 10 / 30s | 7730 | 257.67 | 14 | 140 | 156 | 0 / 0 / 0 |
+| medium | 50 / 60s | 15988 | 266.47 | 123 | 498 | 572 | 0 / 0 / 0 |
+| heavy | 150 / 60s | 15668 | 261.14 | 450 | 1354 | 1679 | 0 / 0 / 0 |
+
+Total seri: **39386 respons**, seluruhnya 2xx. [baseline-light.json](../loadtest/baseline-light.json) adalah run terpisah pada 10:55:07.405 UTC dengan 7886 respons, 262,87 RPS dan p99 149 ms; bukan salinan profil light di tabel ini. Jangan menggabungkan kedua run.
 
 ## Metode dan batas kesimpulan
 

@@ -11,17 +11,21 @@ Sepuluh koneksi lab ditahan; permintaan health gagal 503. Alert HighErrorRate li
 
 ## Hipotesis dan diagnosis
 
-Checkout simulasi tidak dilepas; PostgreSQL masih hidup. Cocokkan pg_stat_activity dengan statistik pool, karena koneksi idle sendiri bukan bukti leak.
+Statistik pada run ini menunjukkan totalCount=10, idleCount=0, waitingCount=5 dan simulatedLeakedCount=10. Ini mendukung checkout yang tertahan di aplikasi; antrean saja tidak cukup untuk menyimpulkan leak. HighErrorRate dan DatabasePoolExhausted tercatat firing.
 
-Hipotesis pembanding: database mati, pool habis, query tidak efisien, alokasi memori biasa, atau partner lambat. Pilih berdasarkan gejala insiden dan cocokkan statistik runtime dengan hasil CLI. Hipotesis di laporan ini direkonstruksi saat review, bukan catatan bertimestamp sebelum injeksi. Run berikutnya harus mencatat prediksi sebelum injeksi sesuai [runbook](../runbook.md).
+Alternatif DB mati dibedakan dengan pemeriksaan konektivitas dan pg_stat_activity; run otomatis membuktikan health kembali 200 setelah release tanpa restart database. Output pg_stat_activity khusus run ini belum dilampirkan, sehingga jangan mengklaim analisis sesi SQL lengkap. Query lambat juga dapat menghabiskan pool, tetapi counter checkout simulasi dan pemulihan setelah release mendukung penyebab yang diinjeksi.
+
+Penjelasan ini merupakan rekonstruksi dari artefak dan kode saat review, bukan catatan hipotesis sebelum injeksi. Run berikutnya perlu mencatat prediksi dan keputusan saat kejadian sesuai [runbook](../runbook.md).
 
 ## Root cause dan recovery
 
-Checkout simulasi tidak dilepas; PostgreSQL masih hidup. Cocokkan pg_stat_activity dengan statistik pool, karena koneksi idle sendiri bukan bukti leak.
+Koneksi yang di-checkout oleh rute simulasi disimpan tanpa release sampai mitigasi dijalankan. Melepas checkout mengembalikan kapasitas pool; memperbesar pool saja tidak menghilangkan sumber retensi.
 
 Mitigasi: `POST /simulations/release-leaks`. Jalankan reset sebelum pindah skenario. Reset akhir memverifikasi health, baca polis, persistensi klaim uji dan pembersihan klaim uji, state fault kosong, serta target aplikasi Prometheus UP. Data lama dipertahankan. Reset default memilih baseline tanpa index; `--indexed` memilih kondisi query sesudah perbaikan.
 
 ## Bukti
+
+[Indeks run dan waktu observasi](../evidence/revalidation/README.md). Timestamp artefak bukan waktu deteksi manusia atau MTTR.
 
 - [INC-001-pool.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/INC-001-pool.json)
 - [INC-001-alerts.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/INC-001-alerts.json)
@@ -32,9 +36,8 @@ Mitigasi: `POST /simulations/release-leaks`. Jalankan reset sebelum pindah skena
 
 | Tindakan | Owner latihan | Status |
 |---|---|---|
-| Mode lab eksplisit, port localhost, deadline dan batas sumber daya | Pemilik repo | Diimplementasikan dan diuji lokal |
-| Reproduksi dan verifikasi transaksi setelah recovery | Pemilik repo | Lulus verify-lab.js |
-| Host exporter, notifikasi eksternal dan cloud | Pemilik repo | Belum dilakukan |
+| Audit jalur checkout agar release selalu dijalankan dalam finally | Pemilik repo | Rencana review lanjutan; injeksi leak tetap disengaja |
+| Uji release pada jalur error dan pantau waktu tunggu akuisisi | Pemilik repo | Belum ada pengujian khusus seluruh jalur checkout |
 
 Bukti alert historis berisi HighHeapMemoryUsage, bukan HighErrorRate. Klaim error rate 98,55% tidak didukung JSON historis tersebut.
 

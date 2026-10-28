@@ -11,17 +11,21 @@ Tmpfs khusus 32 MiB. Penulisan 28 MiB memicu alert live >80%; penambahan 8 MiB m
 
 ## Hipotesis dan diagnosis
 
-File audit ditulis tanpa batas. Docker logging hanya merotasi stdout/stderr, bukan file aplikasi ini. Driver local Docker memiliki rotasi default.
+Artefak penuh menunjukkan sizeBytes=33554432, availableBytes=0, fileSizeBytes=33554432 dan error ENOSPC/HTTP 507. Alert DiskSpaceUsageAbove80 juga tercatat firing. Ini membedakan kehabisan kapasitas filesystem simulasi dari sekadar file log membesar atau dugaan permission denied.
 
-Hipotesis pembanding: database mati, pool habis, query tidak efisien, alokasi memori biasa, atau partner lambat. Pilih berdasarkan gejala insiden dan cocokkan statistik runtime dengan hasil CLI. Hipotesis di laporan ini direkonstruksi saat review, bukan catatan bertimestamp sebelum injeksi. Run berikutnya harus mencatat prediksi sebelum injeksi sesuai [runbook](../runbook.md).
+File audit aplikasi berada pada tmpfs khusus. Rotasi stdout/stderr Docker tidak membatasi file tersebut. Health bisnis tetap 200 menurut assertion run; tidak ada dasar menyimpulkan disk host, WAL PostgreSQL atau layanan bisnis seluruhnya gagal.
+
+Penjelasan ini merupakan rekonstruksi dari artefak dan kode saat review, bukan catatan hipotesis sebelum injeksi. Run berikutnya perlu mencatat prediksi dan keputusan saat kejadian sesuai [runbook](../runbook.md).
 
 ## Root cause dan recovery
 
-File audit ditulis tanpa batas. Docker logging hanya merotasi stdout/stderr, bukan file aplikasi ini. Driver local Docker memiliki rotasi default.
+Penulisan file audit tanpa batas menghabiskan kapasitas tmpfs khusus. Truncate memulihkan ruang file tersebut; rotasi logging driver Docker hanya menangani stdout/stderr.
 
 Mitigasi: `POST /simulations/clean-disk`. Jalankan reset sebelum pindah skenario. Reset akhir memverifikasi health, baca polis, persistensi klaim uji dan pembersihan klaim uji, state fault kosong, serta target aplikasi Prometheus UP. Data lama dipertahankan. Reset default memilih baseline tanpa index; `--indexed` memilih kondisi query sesudah perbaikan.
 
 ## Bukti
+
+[Indeks run dan waktu observasi](../evidence/revalidation/README.md). Timestamp artefak bukan waktu deteksi manusia atau MTTR.
 
 - [INC-004-alerts.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/INC-004-alerts.json)
 - [INC-004-full.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/INC-004-full.json)
@@ -33,9 +37,8 @@ Mitigasi: `POST /simulations/clean-disk`. Jalankan reset sebelum pindah skenario
 
 | Tindakan | Owner latihan | Status |
 |---|---|---|
-| Mode lab eksplisit, port localhost, deadline dan batas sumber daya | Pemilik repo | Diimplementasikan dan diuji lokal |
-| Reproduksi dan verifikasi transaksi setelah recovery | Pemilik repo | Lulus verify-lab.js |
-| Host exporter, notifikasi eksternal dan cloud | Pemilik repo | Belum dilakukan |
+| Batasi/rotasi file audit pada writer aplikasi | Pemilik repo | Rekomendasi; truncate saat ini merupakan mitigasi lab |
+| Uji perilaku writer saat ENOSPC dan pemulihan ruang | Pemilik repo | ENOSPC/507 dan truncate terverifikasi lokal |
 
 Eksperimen historis menulis 150 MB saat disk hanya 1% terpakai: bukti log bloat, bukan disk penuh atau P1. Simulasi baru tidak mengklaim disk host atau WAL PostgreSQL penuh. Jangan menjadwalkan prune volume sebagai pencegahan.
 

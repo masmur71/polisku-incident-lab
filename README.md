@@ -1,17 +1,44 @@
 # PolisKu Incident Lab
 
-A local incident-response portfolio : monitor a policy/claims API, investigate failures with SQL and runtime metrics, restore service, and communicate evidence-based findings.
+A local incident-response portfolio for a Junior Support Engineer role: monitor a policy/claims API, investigate failures with SQL and runtime metrics, restore service, and communicate evidence-based findings.
 
 The application is deliberately small. The deliverable is a reproducible investigation with honest impact statements and verifiable recovery.
+
+## Start here
+
+Five deliberate incidents run on Docker Desktop with Node.js/TypeScript, PostgreSQL, Prometheus and Grafana. Read the reports without installing the lab:
+
+| Skill | Recommended investigation | Observed result |
+|---|---|---|
+| SQL diagnosis | [INC-003: slow query](docs/incidents/INC-003-slow-query.md) | Query execution 77.962 → 0.199 ms; HTTP throughput 92 → 376.6 req/s in the matched local run |
+| Application troubleshooting | [INC-001: pool exhaustion](docs/incidents/INC-001-connection-pool.md) | 10 checked-out connections, 5 waiting requests, HTTP 503, live error alert and recovery |
+| Filesystem troubleshooting | [INC-004: disk full](docs/incidents/INC-004-disk-full.md) | Real ENOSPC/507 in a bounded 32 MiB filesystem; business health stayed available |
+| Recovery and communication | [Evidence guide](docs/evidence/revalidation/README.md) and [communication drafts](docs/comms-templates.md) | Read/write recovery assertions and simulated stakeholder updates |
+
+These are local measurements, not production capacity claims. The evidence guide identifies the selected successful run and separates historical failed runs. [Project status](docs/backlog.md) lists remaining work.
 
 ![Local architecture](docs/architecture.png)
 
 ## Run locally
 
-Prerequisites: Docker Desktop with Linux containers. Node.js 20 and global autocannon are required for tests/injection (`npm install -g autocannon`).
+Prerequisites: Git, Docker Desktop running Linux containers, Node.js 20 and global autocannon (`npm install -g autocannon`). Commands below work from PowerShell or a shell with Git, Docker and Node on PATH.
 
 ```sh
+git clone https://github.com/masmur71/polisku-incident-lab.git
+cd polisku-incident-lab
 docker compose up -d --build
+docker compose ps
+```
+
+First startup can take several minutes to seed data. Wait until app and postgres are healthy in `docker compose ps`, then check the API:
+
+```sh
+node -e "fetch('http://127.0.0.1:3000/health').then(async r=>{console.log(r.status,await r.text());process.exit(r.ok?0:1)}).catch(e=>{console.error(e.message);process.exit(1)})"
+```
+
+Continue only after HTTP 200. If startup fails, inspect `docker compose logs --tail 100 postgres app`; see the [runbook](docs/runbook.md). Then prepare and exercise the baseline:
+
+```sh
 node scripts/reset.js
 node loadtest/autocannon-traffic.js --level light
 ```
@@ -33,7 +60,7 @@ First startup seeds 100k customers, 200k policies, 400k claims and 1M premium pa
 | Disk full | Live disk alert, real ENOSPC/507 in bounded 32 MiB tmpfs, truncate recovery | [INC-004](docs/incidents/INC-004-disk-full.md) |
 | Partner deadline | 12s mock versus 2s timeout; honest 504, no false queue acknowledgement | [INC-005](docs/incidents/INC-005-downstream-timeout.md) |
 
-[Latest verification evidence](docs/evidence/revalidation/) records timestamps, raw output and assertions. [Baseline](docs/baseline.md) reports three load profiles; [runbook](docs/runbook.md) explains diagnosis, reset and a 3–5 minute interview demo. [Communication drafts](docs/comms-templates.md) are simulations, not sent messages.
+[Verification evidence guide](docs/evidence/revalidation/README.md) links the selected run, timestamps, raw output and assertions. [Baseline](docs/baseline.md) reports three load profiles; [runbook](docs/runbook.md) explains diagnosis, reset and a 3–5 minute interview demo. [Communication drafts](docs/comms-templates.md) are simulations, not sent messages.
 
 ![Verified Grafana dashboard](docs/evidence/observability/05-local-dashboard-verified.png)
 
@@ -59,4 +86,4 @@ Likewise, HTTP 202 cannot honestly mean work was queued when nothing was stored.
 
 Validated locally on Docker Desktop. Incident-disk metrics describe tmpfs, and CPU/RSS metrics describe the Node process; neither is Windows host monitoring. The partner mock shares the application process. Heap alert behavior is tested synthetically; a new live heap-pressure firing is not claimed. Historical screenshots and artifacts are retained with corrections in the reports.
 
-GitHub publication, GCP deployment, external notifications, Jira/Confluence links, a recorded demo and an independent fresh-clone walkthrough are pending. Once local validation is accepted, deploy the same tested revision to GCP and reproduce one or two incidents via restricted access. No cloud deployment evidence is claimed by this repository yet.
+Source and local evidence are published on GitHub. GCP deployment, external notifications, Jira/Confluence links, a recorded demo, public heap-retainer analysis and an independent fresh-clone walkthrough remain pending. Once local validation is accepted, deploy the same tested revision to GCP and reproduce one or two incidents via restricted access. No cloud deployment evidence is claimed by this repository yet.

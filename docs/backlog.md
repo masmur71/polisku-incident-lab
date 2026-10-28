@@ -9,6 +9,8 @@
 - [ ] Rekaman demo 3–5 menit dan uji README oleh orang lain dari clone bersih.
 - [ ] Screenshot analisis retainer heap; snapshot besar tetap lokal.
 - [ ] Host exporter dan notifikasi eksternal bila diperlukan.
-- [ ] GitHub, Jira/Confluence dan deployment GCP.
+- [x] Source dan evidence lokal dipublikasikan di GitHub.
+- [x] Jalur baca recruiter, baseline sesuai JSON, indeks evidence dan quickstart diperjelas.
+- [ ] Jira/Confluence dan deployment GCP.
 - [ ] Budget, snapshot dan biaya cloud diverifikasi saat fase cloud.
 

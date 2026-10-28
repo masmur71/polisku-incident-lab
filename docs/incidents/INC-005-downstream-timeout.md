@@ -11,17 +11,21 @@ Mock partner merespons sekitar 12 detik; deadline 2 detik menghasilkan HTTP 504 
 
 ## Hipotesis dan diagnosis
 
-Tanpa deadline bisnis, pengguna menunggu partner. Mock berjalan dalam proses yang sama; in-flight 10 tidak membuktikan kapasitas socket maksimum.
+Panggilan tanpa deadline bisnis selesai dengan 200 setelah 12052 ms. Dengan deadline 2000 ms, hasil menjadi 504 setelah 2016 ms dan queued=false. Perbandingan ini menunjukkan batas waktu respons klien, bukan partner yang menjadi lebih cepat.
 
-Hipotesis pembanding: database mati, pool habis, query tidak efisien, alokasi memori biasa, atau partner lambat. Pilih berdasarkan gejala insiden dan cocokkan statistik runtime dengan hasil CLI. Hipotesis di laporan ini direkonstruksi saat review, bukan catatan bertimestamp sebelum injeksi. Run berikutnya harus mencatat prediksi sebelum injeksi sesuai [runbook](../runbook.md).
+Mock berada dalam proses aplikasi yang sama. Run ini tidak mengisolasi masalah jaringan/TLS, kapasitas socket, atau pembatalan pekerjaan di sisi partner. Tidak ada bukti antrean persisten, retry atau circuit breaker; respons gagal tidak boleh dianggap klaim diterima.
+
+Penjelasan ini merupakan rekonstruksi dari artefak dan kode saat review, bukan catatan hipotesis sebelum injeksi. Run berikutnya perlu mencatat prediksi dan keputusan saat kejadian sesuai [runbook](../runbook.md).
 
 ## Root cause dan recovery
 
-Tanpa deadline bisnis, pengguna menunggu partner. Mock berjalan dalam proses yang sama; in-flight 10 tidak membuktikan kapasitas socket maksimum.
+Tanpa deadline bisnis, respons menunggu mock partner sekitar 12 detik. AbortController membatasi waktu tunggu fetch dan body; timer dibersihkan dalam finally. Mitigasi mengembalikan kegagalan eksplisit, bukan keberhasilan transaksi.
 
 Mitigasi: `AbortController dengan timer dibersihkan dalam finally, mencakup fetch dan body`. Jalankan reset sebelum pindah skenario. Reset akhir memverifikasi health, baca polis, persistensi klaim uji dan pembersihan klaim uji, state fault kosong, serta target aplikasi Prometheus UP. Data lama dipertahankan. Reset default memilih baseline tanpa index; `--indexed` memilih kondisi query sesudah perbaikan.
 
 ## Bukti
+
+[Indeks run dan waktu observasi](../evidence/revalidation/README.md). Timestamp artefak bukan waktu deteksi manusia atau MTTR.
 
 - [INC-005-timeout.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/INC-005-timeout.json)
 - [summary.json](../evidence/revalidation/2026-10-28T09-26-51-924Z/summary.json)
@@ -31,9 +35,8 @@ Mitigasi: `AbortController dengan timer dibersihkan dalam finally, mencakup fetc
 
 | Tindakan | Owner latihan | Status |
 |---|---|---|
-| Mode lab eksplisit, port localhost, deadline dan batas sumber daya | Pemilik repo | Diimplementasikan dan diuji lokal |
-| Reproduksi dan verifikasi transaksi setelah recovery | Pemilik repo | Lulus verify-lab.js |
-| Host exporter, notifikasi eksternal dan cloud | Pemilik repo | Belum dilakukan |
+| Pertahankan deadline dan respons gagal tanpa pengakuan queue | Pemilik repo | Diimplementasikan; 504 dan queued=false terverifikasi |
+| Uji partner terpisah serta kegagalan koneksi/body lambat | Pemilik repo | Pending; mock sekarang satu proses |
 
 Respons 202 historis hanya pesan: tidak ada queue atau circuit breaker. Implementasi baru memakai 504 untuk timeout, 502 untuk kegagalan partner, dan tidak menyatakan klaim diterima.
 
