@@ -1,6 +1,6 @@
 # PolisKu Incident Lab
 
-A local incident-response portfolio for a **Jr. Support Engineer in life insurance**: monitor a policy/claims API, investigate failures with SQL and runtime metrics, restore service, and communicate evidence-based findings.
+A local incident-response portfolio for a : monitor a policy/claims API, investigate failures with SQL and runtime metrics, restore service, and communicate evidence-based findings.
 
 The application is deliberately small. The deliverable is a reproducible investigation with honest impact statements and verifiable recovery.
 

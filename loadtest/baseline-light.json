@@ -1,6 +1,6 @@
 {
-  "runId": "2026-10-28T09:31:17.866Z",
-  "commit": "8590919b44300630219f32b97c219ffbe63fa860",
+  "runId": "2026-10-28T10:55:07.405Z",
+  "commit": "0d1f6fc4c7e3d1f7472ca357c08d607b4e0c7c99",
   "workingTreeDirty": true,
   "machine": {
     "platform": "win32",
@@ -13,249 +13,249 @@
   "requiredDatabaseState": "Seeded 1-200000 policies; claims.status intentionally unindexed. Run reset.js before baseline.",
   "metricsSampling": "1-second samples during load; final snapshot after load",
   "initialMetrics": {
-    "heapUsedMb": "14.68",
-    "heapTotalMb": "15.77",
+    "heapUsedMb": "14.70",
+    "heapTotalMb": "16.02",
     "dbPoolTotal": 1,
     "dbPoolIdle": 1,
     "dbPoolWaiting": 0
   },
   "samples": [
     {
-      "at": "2026-10-28T09:30:48.683Z",
-      "heapUsedMb": "20.99",
-      "heapTotalMb": "23.27",
+      "at": "2026-10-28T10:54:37.820Z",
+      "heapUsedMb": "20.96",
+      "heapTotalMb": "23.52",
       "dbPoolTotal": 10,
-      "dbPoolIdle": 0,
+      "dbPoolIdle": 2,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:30:49.684Z",
-      "heapUsedMb": "21.72",
+      "at": "2026-10-28T10:54:38.820Z",
+      "heapUsedMb": "22.21",
       "heapTotalMb": "24.52",
       "dbPoolTotal": 10,
-      "dbPoolIdle": 2,
+      "dbPoolIdle": 0,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:30:50.690Z",
-      "heapUsedMb": "19.03",
+      "at": "2026-10-28T10:54:39.821Z",
+      "heapUsedMb": "22.52",
+      "heapTotalMb": "25.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:40.827Z",
+      "heapUsedMb": "23.02",
       "heapTotalMb": "25.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 7,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:51.690Z",
-      "heapUsedMb": "17.72",
-      "heapTotalMb": "25.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 3,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:52.692Z",
-      "heapUsedMb": "16.21",
-      "heapTotalMb": "26.02",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:53.693Z",
-      "heapUsedMb": "23.07",
-      "heapTotalMb": "26.02",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:54.693Z",
-      "heapUsedMb": "22.73",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 2,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:55.699Z",
-      "heapUsedMb": "20.58",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 2,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:56.698Z",
-      "heapUsedMb": "19.39",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:57.698Z",
-      "heapUsedMb": "18.25",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 3,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:58.699Z",
-      "heapUsedMb": "17.28",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 3,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:30:59.701Z",
-      "heapUsedMb": "17.90",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:00.702Z",
-      "heapUsedMb": "17.41",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 2,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:01.702Z",
-      "heapUsedMb": "18.22",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 0,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:02.708Z",
-      "heapUsedMb": "18.47",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 0,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:03.712Z",
-      "heapUsedMb": "17.36",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 5,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:04.715Z",
-      "heapUsedMb": "18.42",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 0,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:05.718Z",
-      "heapUsedMb": "18.95",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:06.720Z",
-      "heapUsedMb": "20.89",
-      "heapTotalMb": "26.27",
       "dbPoolTotal": 10,
       "dbPoolIdle": 4,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:31:07.721Z",
-      "heapUsedMb": "21.25",
-      "heapTotalMb": "26.27",
+      "at": "2026-10-28T10:54:41.827Z",
+      "heapUsedMb": "15.26",
+      "heapTotalMb": "26.02",
       "dbPoolTotal": 10,
       "dbPoolIdle": 3,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:31:08.721Z",
-      "heapUsedMb": "21.62",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 3,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:09.726Z",
-      "heapUsedMb": "21.58",
-      "heapTotalMb": "26.27",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 2,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:10.731Z",
-      "heapUsedMb": "21.43",
-      "heapTotalMb": "26.27",
+      "at": "2026-10-28T10:54:42.827Z",
+      "heapUsedMb": "16.40",
+      "heapTotalMb": "26.02",
       "dbPoolTotal": 10,
       "dbPoolIdle": 1,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:31:11.731Z",
-      "heapUsedMb": "21.73",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:12.734Z",
-      "heapUsedMb": "21.45",
-      "heapTotalMb": "26.77",
+      "at": "2026-10-28T10:54:43.830Z",
+      "heapUsedMb": "17.31",
+      "heapTotalMb": "26.27",
       "dbPoolTotal": 10,
       "dbPoolIdle": 0,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:31:13.737Z",
-      "heapUsedMb": "21.88",
-      "heapTotalMb": "26.77",
+      "at": "2026-10-28T10:54:44.832Z",
+      "heapUsedMb": "19.00",
+      "heapTotalMb": "26.27",
       "dbPoolTotal": 10,
       "dbPoolIdle": 1,
       "dbPoolWaiting": 0
     },
     {
-      "at": "2026-10-28T09:31:14.739Z",
-      "heapUsedMb": "20.98",
-      "heapTotalMb": "26.77",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 3,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:15.752Z",
-      "heapUsedMb": "18.10",
-      "heapTotalMb": "27.02",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 3,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:16.759Z",
-      "heapUsedMb": "23.28",
-      "heapTotalMb": "27.02",
-      "dbPoolTotal": 10,
-      "dbPoolIdle": 1,
-      "dbPoolWaiting": 0
-    },
-    {
-      "at": "2026-10-28T09:31:17.761Z",
-      "heapUsedMb": "20.19",
+      "at": "2026-10-28T10:54:45.831Z",
+      "heapUsedMb": "20.84",
       "heapTotalMb": "26.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:46.838Z",
+      "heapUsedMb": "21.82",
+      "heapTotalMb": "26.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:47.839Z",
+      "heapUsedMb": "23.35",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:48.842Z",
+      "heapUsedMb": "16.91",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:49.842Z",
+      "heapUsedMb": "18.83",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:50.844Z",
+      "heapUsedMb": "19.93",
+      "heapTotalMb": "27.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:51.845Z",
+      "heapUsedMb": "21.62",
+      "heapTotalMb": "27.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:52.845Z",
+      "heapUsedMb": "23.48",
+      "heapTotalMb": "27.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:53.844Z",
+      "heapUsedMb": "16.98",
+      "heapTotalMb": "27.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:54.845Z",
+      "heapUsedMb": "19.38",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:55.845Z",
+      "heapUsedMb": "20.04",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 4,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:56.846Z",
+      "heapUsedMb": "21.67",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 5,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:57.851Z",
+      "heapUsedMb": "23.24",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:58.851Z",
+      "heapUsedMb": "16.29",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 6,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:54:59.852Z",
+      "heapUsedMb": "16.53",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:00.852Z",
+      "heapUsedMb": "18.24",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:01.861Z",
+      "heapUsedMb": "18.68",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:02.865Z",
+      "heapUsedMb": "19.57",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:03.864Z",
+      "heapUsedMb": "21.02",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:04.868Z",
+      "heapUsedMb": "21.07",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:05.869Z",
+      "heapUsedMb": "22.94",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T10:55:06.870Z",
+      "heapUsedMb": "16.37",
+      "heapTotalMb": "27.02",
       "dbPoolTotal": 10,
       "dbPoolIdle": 4,
       "dbPoolWaiting": 0
@@ -265,22 +265,22 @@
   "name": "Beban Ringan (Light Load)",
   "connections": 10,
   "duration": 30,
-  "totalRequests": 6309,
-  "rpsAvg": 210.3,
-  "rpsMax": 285,
-  "latencyAvgMs": 46.93,
-  "latencyP50Ms": 21,
-  "latencyP90Ms": 128,
-  "latencyP97_5Ms": 167,
-  "latencyP99Ms": 192,
-  "latencyMaxMs": 322,
-  "status2xx": 6309,
+  "totalRequests": 7886,
+  "rpsAvg": 262.87,
+  "rpsMax": 299,
+  "latencyAvgMs": 37.56,
+  "latencyP50Ms": 14,
+  "latencyP90Ms": 117,
+  "latencyP97_5Ms": 139,
+  "latencyP99Ms": 149,
+  "latencyMaxMs": 256,
+  "status2xx": 7886,
   "statusNon2xx": 0,
   "timeouts": 0,
   "errors": 0,
-  "heapUsedMb": "20.35",
-  "heapTotalMb": "26.52",
+  "heapUsedMb": "17.54",
+  "heapTotalMb": "27.02",
   "dbPoolTotal": 10,
-  "dbPoolIdle": 8,
+  "dbPoolIdle": 10,
   "dbPoolWaiting": 0
 }

@@ -11,4 +11,4 @@
 - [ ] Host exporter dan notifikasi eksternal bila diperlukan.
 - [ ] GitHub, Jira/Confluence dan deployment GCP.
 - [ ] Budget, snapshot dan biaya cloud diverifikasi saat fase cloud.
-- Bonus event loop blocked dilewati sesuai scope.
+
