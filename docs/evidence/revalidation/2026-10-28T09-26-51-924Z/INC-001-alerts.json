@@ -1,0 +1,32 @@
+[
+  {
+    "labels": {
+      "alertname": "HighErrorRate",
+      "severity": "critical"
+    },
+    "annotations": {
+      "description": "HTTP 5xx error rate is currently at 87.01% over the last 2 minutes.",
+      "summary": "High HTTP 5xx error rate detected (>5%)"
+    },
+    "state": "firing",
+    "activeAt": "2026-10-28T09:27:11.043117927Z",
+    "value": "8.701393296724228e+01"
+  },
+  {
+    "labels": {
+      "alertname": "DatabasePoolExhausted",
+      "environment": "local",
+      "instance": "app:3000",
+      "job": "polisku-app",
+      "service": "polisku-api",
+      "severity": "critical"
+    },
+    "annotations": {
+      "description": "5 requests are queued waiting for a database connection.",
+      "summary": "PostgreSQL connection pool exhausted"
+    },
+    "state": "firing",
+    "activeAt": "2026-10-28T09:27:06.043117927Z",
+    "value": "5e+00"
+  }
+]

@@ -1,46 +1,19 @@
-# Template Komunikasi Insiden
+# Komunikasi insiden
 
-## 1. Pesan Awal (Saat Insiden Terdeteksi)
+Semua pesan adalah **draft simulasi**, bukan bukti pengiriman. Gunakan timestamp/timezone artefak dan severity sesuai dampak nyata.
 
-```
-[INCIDENT] Kami mendeteksi gangguan pada layanan PolisKu.
+| Insiden | Awal, update, resolusi |
+|---|---|
+| INC-001 | [Draft](evidence/INC-001/communications.md) |
+| INC-002 | [Draft](evidence/INC-002/communications.md) |
+| INC-003 | [Draft](evidence/INC-003/communications.md) |
+| INC-004 | [Draft](evidence/INC-004/communications.md) |
+| INC-005 | [Draft](evidence/INC-005/communications.md) |
 
-Dampak: [deskripsi dampak ke pengguna]
-Waktu terdeteksi: [timestamp]
-Status: Sedang diinvestigasi
+## Format
 
-Tim sedang melakukan investigasi. Update selanjutnya dalam [X] menit.
+Awal: ID, severity, waktu deteksi, fitur terdampak, fakta diketahui, status investigasi, jadwal update berikutnya.
 
-— Tim Support PolisKu
-```
+Update: perubahan dampak, bukti baru dan tingkat kepastian, mitigasi, hambatan/eskalasi, ETA bila didukung bukti.
 
-## 2. Pesan Update (Selama Investigasi)
-
-```
-[UPDATE] Insiden PolisKu - [judul singkat]
-
-Status: Masih dalam investigasi / Penyebab teridentifikasi
-Temuan sementara: [ringkasan temuan]
-Tindakan yang sedang dilakukan: [langkah recovery]
-Estimasi pemulihan: [waktu]
-
-— Tim Support PolisKu
-```
-
-## 3. Pesan Resolusi (Setelah Pulih)
-
-```
-[RESOLVED] Insiden PolisKu - [judul singkat]
-
-Waktu mulai: [timestamp]
-Waktu selesai: [timestamp]
-Durasi dampak: [durasi]
-
-Penyebab: [ringkasan root cause]
-Tindakan yang dilakukan: [ringkasan resolusi]
-Pencegahan: [tindakan pencegahan yang akan dilakukan]
-
-Layanan telah kembali normal. Kami mohon maaf atas ketidaknyamanan ini.
-
-— Tim Support PolisKu
-```
+Resolusi: waktu mulai/deteksi/pulih, durasi terhitung, penyebab terverifikasi, tindakan, bukti transaksi kembali benar, risiko tersisa, action item dengan owner dan tanggal target. Jika tidak ada catatan waktu yang dapat dibuktikan, jangan membuat durasi fiktif.

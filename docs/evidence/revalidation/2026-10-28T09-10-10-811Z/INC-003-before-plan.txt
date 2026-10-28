@@ -1,0 +1,24 @@
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=12588.85..12600.52 rows=100 width=86) (actual time=39.743..42.883 rows=100 loops=1)
+   Buffers: shared hit=297 read=5699
+   ->  Gather Merge  (cost=12588.85..33527.54 rows=179462 width=86) (actual time=39.741..42.874 rows=100 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=297 read=5699
+         ->  Sort  (cost=11588.82..11813.15 rows=89731 width=86) (actual time=35.613..35.618 rows=79 loops=3)
+               Sort Key: filed_at DESC
+               Sort Method: top-N heapsort  Memory: 49kB
+               Buffers: shared hit=297 read=5699
+               Worker 0:  Sort Method: top-N heapsort  Memory: 42kB
+               Worker 1:  Sort Method: top-N heapsort  Memory: 47kB
+               ->  Parallel Seq Scan on claims  (cost=0.00..8159.37 rows=89731 width=86) (actual time=0.067..27.906 rows=76397 loops=3)
+                     Filter: ((status)::text = 'PENDING'::text)
+                     Rows Removed by Filter: 66667
+                     Buffers: shared hit=225 read=5699
+ Planning:
+   Buffers: shared hit=113
+ Planning Time: 1.094 ms
+ Execution Time: 43.035 ms
+(20 rows)
+

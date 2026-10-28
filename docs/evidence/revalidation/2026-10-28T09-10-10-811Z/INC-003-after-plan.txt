@@ -1,0 +1,13 @@
+                                                                     QUERY PLAN                                                                      
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.42..13.01 rows=100 width=86) (actual time=0.045..0.095 rows=100 loops=1)
+   Buffers: shared hit=97
+   ->  Index Scan using idx_claims_status_filed_at on claims  (cost=0.42..27108.67 rows=215354 width=86) (actual time=0.043..0.089 rows=100 loops=1)
+         Index Cond: ((status)::text = 'PENDING'::text)
+         Buffers: shared hit=97
+ Planning:
+   Buffers: shared hit=143 read=1
+ Planning Time: 1.229 ms
+ Execution Time: 0.129 ms
+(9 rows)
+

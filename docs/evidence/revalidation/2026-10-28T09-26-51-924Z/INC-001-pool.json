@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-28T09:27:35.639Z",
+  "status": 200,
+  "ms": 11,
+  "body": {
+    "pool": {
+      "totalCount": 10,
+      "idleCount": 0,
+      "waitingCount": 5,
+      "simulatedLeakedCount": 10
+    },
+    "memory": {
+      "rssMb": 66.08,
+      "heapTotalMb": 17.02,
+      "heapUsedMb": 16.08,
+      "externalMb": 3.43,
+      "leakArrayLength": 0
+    },
+    "uptimeSeconds": 41
+  }
+}

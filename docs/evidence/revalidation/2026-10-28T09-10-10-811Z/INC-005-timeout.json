@@ -1,0 +1,25 @@
+{
+  "slow": {
+    "at": "2026-10-28T09:13:36.079Z",
+    "status": 200,
+    "ms": 12028,
+    "body": {
+      "status": "completed",
+      "data": {
+        "status": "verified",
+        "partner": "AsuransiJiwa-External-Gateway",
+        "verifiedAt": "2026-10-28T09:13:36.063Z"
+      }
+    }
+  },
+  "timeout": {
+    "at": "2026-10-28T09:13:38.089Z",
+    "status": 504,
+    "ms": 2010,
+    "body": {
+      "status": "VERIFICATION_UNAVAILABLE",
+      "queued": false,
+      "message": "Partner verification failed. No claim was accepted or queued by this simulation."
+    }
+  }
+}

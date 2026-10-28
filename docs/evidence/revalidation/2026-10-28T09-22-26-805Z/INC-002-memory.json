@@ -1,0 +1,66 @@
+{
+  "before": {
+    "at": "2026-10-28T09:23:59.782Z",
+    "status": 200,
+    "ms": 6,
+    "body": {
+      "pool": {
+        "totalCount": 10,
+        "idleCount": 10,
+        "waitingCount": 0,
+        "simulatedLeakedCount": 0
+      },
+      "memory": {
+        "rssMb": 67.39,
+        "heapTotalMb": 18.77,
+        "heapUsedMb": 17.13,
+        "externalMb": 3.47,
+        "leakArrayLength": 0
+      },
+      "uptimeSeconds": 90
+    }
+  },
+  "during": {
+    "at": "2026-10-28T09:23:59.965Z",
+    "status": 200,
+    "ms": 7,
+    "body": {
+      "pool": {
+        "totalCount": 10,
+        "idleCount": 10,
+        "waitingCount": 0,
+        "simulatedLeakedCount": 0
+      },
+      "memory": {
+        "rssMb": 83.29,
+        "heapTotalMb": 33.52,
+        "heapUsedMb": 31.12,
+        "externalMb": 3.4,
+        "leakArrayLength": 64000
+      },
+      "uptimeSeconds": 90
+    }
+  },
+  "after": {
+    "at": "2026-10-28T09:23:59.992Z",
+    "status": 200,
+    "ms": 6,
+    "body": {
+      "pool": {
+        "totalCount": 10,
+        "idleCount": 10,
+        "waitingCount": 0,
+        "simulatedLeakedCount": 0
+      },
+      "memory": {
+        "rssMb": 83.91,
+        "heapTotalMb": 33.52,
+        "heapUsedMb": 31.3,
+        "externalMb": 3.4,
+        "leakArrayLength": 0
+      },
+      "uptimeSeconds": 90
+    }
+  },
+  "note": "Reference release is verified. Immediate RSS shrink or GC-pause causality is not asserted."
+}

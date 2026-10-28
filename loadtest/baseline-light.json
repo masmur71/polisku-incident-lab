@@ -1,24 +1,286 @@
 {
+  "runId": "2026-10-28T09:31:17.866Z",
+  "commit": "8590919b44300630219f32b97c219ffbe63fa860",
+  "workingTreeDirty": true,
+  "machine": {
+    "platform": "win32",
+    "cpu": "AMD Ryzen 7 8840HS w/ Radeon 780M Graphics     ",
+    "logicalCpus": 16,
+    "memoryBytes": 16419598336,
+    "node": "v20.16.0"
+  },
+  "packageLockSha256": "5434f56757564be09769989c1d7f4e338344e1e1304c1c63b23dac66f2467e82",
+  "requiredDatabaseState": "Seeded 1-200000 policies; claims.status intentionally unindexed. Run reset.js before baseline.",
+  "metricsSampling": "1-second samples during load; final snapshot after load",
+  "initialMetrics": {
+    "heapUsedMb": "14.68",
+    "heapTotalMb": "15.77",
+    "dbPoolTotal": 1,
+    "dbPoolIdle": 1,
+    "dbPoolWaiting": 0
+  },
+  "samples": [
+    {
+      "at": "2026-10-28T09:30:48.683Z",
+      "heapUsedMb": "20.99",
+      "heapTotalMb": "23.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:49.684Z",
+      "heapUsedMb": "21.72",
+      "heapTotalMb": "24.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:50.690Z",
+      "heapUsedMb": "19.03",
+      "heapTotalMb": "25.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 7,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:51.690Z",
+      "heapUsedMb": "17.72",
+      "heapTotalMb": "25.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:52.692Z",
+      "heapUsedMb": "16.21",
+      "heapTotalMb": "26.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:53.693Z",
+      "heapUsedMb": "23.07",
+      "heapTotalMb": "26.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:54.693Z",
+      "heapUsedMb": "22.73",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:55.699Z",
+      "heapUsedMb": "20.58",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:56.698Z",
+      "heapUsedMb": "19.39",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:57.698Z",
+      "heapUsedMb": "18.25",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:58.699Z",
+      "heapUsedMb": "17.28",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:30:59.701Z",
+      "heapUsedMb": "17.90",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:00.702Z",
+      "heapUsedMb": "17.41",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:01.702Z",
+      "heapUsedMb": "18.22",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:02.708Z",
+      "heapUsedMb": "18.47",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:03.712Z",
+      "heapUsedMb": "17.36",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 5,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:04.715Z",
+      "heapUsedMb": "18.42",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:05.718Z",
+      "heapUsedMb": "18.95",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:06.720Z",
+      "heapUsedMb": "20.89",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 4,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:07.721Z",
+      "heapUsedMb": "21.25",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:08.721Z",
+      "heapUsedMb": "21.62",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:09.726Z",
+      "heapUsedMb": "21.58",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 2,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:10.731Z",
+      "heapUsedMb": "21.43",
+      "heapTotalMb": "26.27",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:11.731Z",
+      "heapUsedMb": "21.73",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:12.734Z",
+      "heapUsedMb": "21.45",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 0,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:13.737Z",
+      "heapUsedMb": "21.88",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:14.739Z",
+      "heapUsedMb": "20.98",
+      "heapTotalMb": "26.77",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:15.752Z",
+      "heapUsedMb": "18.10",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 3,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:16.759Z",
+      "heapUsedMb": "23.28",
+      "heapTotalMb": "27.02",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 1,
+      "dbPoolWaiting": 0
+    },
+    {
+      "at": "2026-10-28T09:31:17.761Z",
+      "heapUsedMb": "20.19",
+      "heapTotalMb": "26.52",
+      "dbPoolTotal": 10,
+      "dbPoolIdle": 4,
+      "dbPoolWaiting": 0
+    }
+  ],
   "profile": "light",
   "name": "Beban Ringan (Light Load)",
   "connections": 10,
   "duration": 30,
-  "totalRequests": 8459,
-  "rpsAvg": 281.97,
-  "rpsMax": 323,
-  "latencyAvgMs": 35,
-  "latencyP50Ms": 13,
-  "latencyP90Ms": 102,
-  "latencyP97_5Ms": 121,
-  "latencyP99Ms": 134,
-  "latencyMaxMs": 237,
-  "status2xx": 8459,
+  "totalRequests": 6309,
+  "rpsAvg": 210.3,
+  "rpsMax": 285,
+  "latencyAvgMs": 46.93,
+  "latencyP50Ms": 21,
+  "latencyP90Ms": 128,
+  "latencyP97_5Ms": 167,
+  "latencyP99Ms": 192,
+  "latencyMaxMs": 322,
+  "status2xx": 6309,
   "statusNon2xx": 0,
   "timeouts": 0,
   "errors": 0,
-  "heapUsedMb": "23.69",
-  "heapTotalMb": "70.65",
+  "heapUsedMb": "20.35",
+  "heapTotalMb": "26.52",
   "dbPoolTotal": 10,
-  "dbPoolIdle": 9,
+  "dbPoolIdle": 8,
   "dbPoolWaiting": 0
 }

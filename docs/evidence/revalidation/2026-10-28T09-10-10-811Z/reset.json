@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-28T09:13:48.918Z",
+  "status": "recovered",
+  "index": "unindexed",
+  "businessReadWrite": "passed",
+  "data": "Existing data preserved; only the smoke claim was deleted",
+  "pool": {
+    "totalCount": 1,
+    "idleCount": 1,
+    "waitingCount": 0,
+    "simulatedLeakedCount": 0
+  },
+  "disk": {
+    "logPath": "/incident-disk/audit-debug.log",
+    "fileSizeMb": 0,
+    "exists": false,
+    "sizeBytes": 33554432,
+    "availableBytes": 33554432,
+    "fileSizeBytes": 0
+  },
+  "prometheus": "up"
+}

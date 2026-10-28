@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-28T09:13:24.050Z",
+  "status": 200,
+  "ms": 2,
+  "body": {
+    "logPath": "/incident-disk/audit-debug.log",
+    "fileSizeMb": 0,
+    "exists": true,
+    "sizeBytes": 33554432,
+    "availableBytes": 33554432,
+    "fileSizeBytes": 0
+  }
+}

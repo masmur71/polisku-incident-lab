@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-28T09:13:24.030Z",
+  "status": 507,
+  "ms": 14,
+  "body": {
+    "error": "ENOSPC",
+    "disk": {
+      "sizeBytes": 33554432,
+      "availableBytes": 0,
+      "fileSizeBytes": 33554432
+    }
+  }
+}

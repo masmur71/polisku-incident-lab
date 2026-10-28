@@ -1,0 +1,19 @@
+[
+  {
+    "labels": {
+      "alertname": "DiskSpaceUsageAbove80",
+      "environment": "local",
+      "instance": "app:3000",
+      "job": "polisku-app",
+      "service": "polisku-api",
+      "severity": "warning"
+    },
+    "annotations": {
+      "description": "Dedicated lab filesystem usage has exceeded 80% capacity.",
+      "summary": "Disk space usage above 80%"
+    },
+    "state": "pending",
+    "activeAt": "2026-10-28T09:24:31.043117927Z",
+    "value": "8.74755859375e+01"
+  }
+]

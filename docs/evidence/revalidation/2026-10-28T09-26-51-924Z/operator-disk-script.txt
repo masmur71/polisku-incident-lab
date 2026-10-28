@@ -1,0 +1,37 @@
+==========================================================
+  Simulasi Insiden 4: Disk Penuh / Log Bloat (INC-004)
+==========================================================
+
+[1/4] Memeriksa kapasitas disk dan ukuran log awal...
+Status Log Awal : 0 MB (Exists: False)
+Filesystem                Size      Used Available Use% Mounted on
+tmpfs                    32.0M         0     32.0M   0% /incident-disk
+
+[2/4] Menginjeksi penulisan log debug berlebih (1 MB) tanpa batas rotasi...
+Hasil Injeksi:
+  Log File   : /incident-disk/audit-debug.log
+  Ukuran File: 1 MB
+
+[3/4] Melakukan diagnosis kapasitas disk dan file terbesar via CLI...
+
+>> Perintah: df -h /incident-disk
+Filesystem                Size      Used Available Use% Mounted on
+tmpfs                    32.0M      1.0M     31.0M   3% /incident-disk
+
+>> Perintah: du -sh /incident-disk/audit-debug.log
+1.0M	/incident-disk/audit-debug.log
+
+>> Perintah: docker inspect LogConfig (Cek rotasi log Docker)
+{"Type":"json-file","Config":{"max-file":"3","max-size":"10m"}}
+
+[4/4] Memberikan beban trafik normal sembari memantau disk...
+Menjalankan: autocannon -c 10 -d 10 -p 5 http://localhost:3000/health
+
+
+==========================================================
+  Injeksi Insiden 4 Selesai!
+  Langkah berikutnya:
+  1. Simpan output diagnosis ke docs/evidence/INC-004/
+  2. Tunggu alert disk firing; rotasi stdout Docker tidak membatasi file audit ini
+  3. Bersihkan file log via POST /simulations/clean-disk atau truncate
+==========================================================

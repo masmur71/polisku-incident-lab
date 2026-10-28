@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-28T09:22:26.805Z",
+  "commit": "3191add9bf3adb1402fc7a8a278ee4b773ded688",
+  "workingTreeDirty": true,
+  "sourceDiffSha256": "bb5c1d57fe483c672a7e22334a8b35c1c8f2b19d98bd4b1e107265db1f9e8f1e",
+  "packageLockSha256": "5434f56757564be09769989c1d7f4e338344e1e1304c1c63b23dac66f2467e82",
+  "checks": [
+    "INC-001: exhausted pool, 503, HighErrorRate firing, release and health recovery",
+    "INC-002: retained object growth and reference cleanup",
+    "INC-003: matching query and 20-connection load before/after index"
+  ],
+  "status": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(diskAlerts.some(a=>a.labels.alertname==='DiskSpaceUsageAbove80'&&a.state==='firing'))\n\n    at main (C:\\Users\\masmu\\OneDrive\\Documents\\PersProject\\Polisku\\scripts\\verify-lab.js:54:2)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"
+}
