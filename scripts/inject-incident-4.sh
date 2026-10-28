@@ -11,7 +11,7 @@ echo "  Simulasi Insiden 4: Disk Penuh / Log Bloat (INC-004)"
 echo "=========================================================="
 
 echo "[1/4] Memeriksa kapasitas awal..."
-docker exec polisku-app-1 df -h /app
+docker exec polisku-app-1 df -h /incident-disk
 
 echo "[2/4] Menginjeksi penulisan log berlebih ($MEGABYTES MB)..."
 curl --max-time 15 -fsS -X POST "$TARGET_URL/simulations/fill-disk" \

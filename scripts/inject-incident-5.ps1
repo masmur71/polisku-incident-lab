@@ -1,11 +1,11 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-  Injeksi Insiden 5: Downstream Timeout & Socket Starvation (INC-005)
+  Injeksi Insiden 5: Downstream Timeout (INC-005)
 .DESCRIPTION
   Memanggil layanan eksternal rekanan (mock partner gateway) yang lambat (delay 12s)
-  tanpa konfigurasi timeout, memicu penumpukan in-flight request, lonjakan latensi masal,
-  dan kehabisan socket. Kemudian memverifikasi pemulihan menggunakan AbortController timeout.
+  tanpa konfigurasi timeout, memicu penumpukan in-flight request, kelambatan request,
+  tanpa mengklaim batas kapasitas socket server. Kemudian memverifikasi pemulihan menggunakan AbortController timeout.
 #>
 
 param(

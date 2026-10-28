@@ -80,6 +80,6 @@ Write-Host "`n==========================================================" -Foreg
 Write-Host "  Injeksi Selesai. Kondisi Memory Leak Berhasil Terbentuk!" -ForegroundColor Red
 Write-Host "  Langkah berikutnya:" -ForegroundColor Yellow
 Write-Host "  1. Amati grafik Memory Heap di Grafana: http://localhost:3001" -ForegroundColor Yellow
-Write-Host "  2. Ambil file .heapsnapshot dari container: docker cp polisku-app-1:/app/ docs/evidence/INC-002/" -ForegroundColor Yellow
+Write-Host "  2. Cari nama Heap.*.heapsnapshot dalam /app; docker cp hanya file snapshot tersebut" -ForegroundColor Yellow
 Write-Host "  3. Bersihkan leak via POST /simulations/clear-memory-leak atau reset.ps1" -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Cyan
