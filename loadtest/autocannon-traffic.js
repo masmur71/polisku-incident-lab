@@ -12,11 +12,12 @@
  * 
  * Usage:
  *   node loadtest/autocannon-traffic.js --level light|medium|heavy|all
- *   node loadtest/autocannon-traffic.js -c 10 -d 30
  */
 
 const path = require('path');
 const http = require('http');
+const os = require('os');
+const { execFileSync } = require('child_process');
 
 // Support requiring autocannon from local node_modules or global npm modules
 let autocannon;
@@ -24,7 +25,7 @@ try {
   autocannon = require('autocannon');
 } catch (e1) {
   try {
-    const globalPath = path.join(process.env.APPDATA || '', 'npm/node_modules/autocannon');
+    const globalPath = path.join(execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['root', '-g'], { encoding: 'utf8', shell: process.platform === 'win32' }).trim(), 'autocannon');
     autocannon = require(globalPath);
   } catch (e2) {
     try {
@@ -36,7 +37,7 @@ try {
   }
 }
 
-const CLAIM_TYPES = ['HEALTH', 'DEATH', 'ACCIDENT', 'CRITICAL_ILLNESS'];
+const CLAIM_TYPES = ['DISABILITY', 'DEATH', 'MATURITY', 'CRITICAL_ILLNESS'];
 const TARGET_HOST = process.env.TARGET_URL || 'http://localhost:3000';
 
 // Pre-defined load levels as specified in projectphases.md
@@ -66,7 +67,7 @@ const PROFILES = {
  */
 async function fetchMetrics() {
   return new Promise((resolve) => {
-    http.get(`${TARGET_HOST}/metrics`, (res) => {
+    const request = http.get(`${TARGET_HOST}/metrics`, (res) => {
       let data = '';
       res.on('data', (chunk) => { data += chunk; });
       res.on('end', () => {
@@ -95,7 +96,9 @@ async function fetchMetrics() {
 
         resolve(metrics);
       });
-    }).on('error', () => {
+    });
+    request.setTimeout(3000, () => request.destroy(new Error('Metrics deadline exceeded')));
+    request.on('error', () => {
       resolve({ heapUsedMb: 'N/A', heapTotalMb: 'N/A', dbPoolTotal: 'N/A', dbPoolIdle: 'N/A', dbPoolWaiting: 'N/A' });
     });
   });
@@ -208,12 +211,20 @@ async function runProfile(profileKey) {
     connections: profile.connections,
     duration: profile.duration,
     pipelining: 1,
-    requests: buildRequests(),
-    setupRequest
+    requests: buildRequests().map(request => ({ ...request, setupRequest }))
   };
 
+  const samples = [];
+  let sampling = false;
+  const sampler = setInterval(async () => {
+    if (sampling) return;
+    sampling = true;
+    try { samples.push({ at: new Date().toISOString(), ...await fetchMetrics() }); }
+    finally { sampling = false; }
+  }, 1000);
   return new Promise((resolve, reject) => {
     const instance = autocannon(opts, async (err, result) => {
+      clearInterval(sampler);
       if (err) return reject(err);
 
       console.log('\n--- Hasil Uji Beban (Autocannon) ---');
@@ -222,6 +233,16 @@ async function runProfile(profileKey) {
       const postMetrics = await fetchMetrics();
 
       const summary = {
+        runId: new Date().toISOString(),
+        commit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+        workingTreeDirty: !!execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
+        machine: { platform: os.platform(), cpu: os.cpus()[0].model, logicalCpus: os.cpus().length, memoryBytes: os.totalmem(), node: process.version },
+        packageLockSha256: require('crypto').createHash('sha256').update(require('fs').readFileSync(path.join(__dirname, '../app/package-lock.json'))).digest('hex'),
+        requiredDatabaseState: 'Seeded 1-200000 policies; claims.status intentionally unindexed. Run reset.js before baseline.',
+        metricsSampling: '1-second samples during load; final snapshot after load',
+        initialMetrics,
+        samples,
+
         profile: profileKey,
         name: profile.name,
         connections: profile.connections,
@@ -315,7 +336,7 @@ async function main() {
       'p99 (ms)': r.latencyP99Ms,
       'Heap (MB)': `${r.heapUsedMb} / ${r.heapTotalMb}`,
       'Pool Waiting': r.dbPoolWaiting,
-      'Errors': r.errors + r.timeouts
+      'Errors (incl timeout)': r.errors
     })));
 
     // Output JSON output to stdout or file

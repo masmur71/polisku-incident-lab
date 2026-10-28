@@ -2,7 +2,9 @@ import request from 'supertest';
 import app from './app';
 import pool from './db';
 
+const createdClaims: number[] = [];
 afterAll(async () => {
+  if (createdClaims.length) await pool.query('DELETE FROM claims WHERE id = ANY($1::int[])', [createdClaims]);
   await pool.end();
 });
 
@@ -31,8 +33,7 @@ describe('GET /policies/:id', () => {
       expect(res.body).toHaveProperty('customer');
       expect(res.body.customer).toHaveProperty('fullName');
     }
-    // If no seed data, 404 is also acceptable
-    expect([200, 404]).toContain(res.status);
+    expect(res.status).toBe(200);
   });
 });
 
@@ -66,11 +67,13 @@ describe('POST /claims', () => {
         description: 'Test claim from integration test',
         amount: 5000000,
       });
-    // 201 if policy exists with seed data, 404 if no seed
-    expect([201, 404]).toContain(res.status);
+    if (res.body.id) createdClaims.push(res.body.id);
+    expect(res.status).toBe(201);
     if (res.status === 201) {
       expect(res.body).toHaveProperty('id');
       expect(res.body).toHaveProperty('status', 'PENDING');
+      const saved = await pool.query('SELECT status FROM claims WHERE id = $1', [res.body.id]);
+      expect(saved.rows[0].status).toBe('PENDING');
     }
   });
 });
@@ -88,6 +91,7 @@ describe('GET /claims', () => {
     const res = await request(app).get('/claims?status=PENDING');
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('claims');
+    expect(res.body.claims.length).toBeGreaterThan(0);
     if (res.body.claims.length > 0) {
       expect(res.body.claims[0]).toHaveProperty('status', 'PENDING');
     }
@@ -104,3 +108,14 @@ describe('GET /metrics', () => {
   });
 });
 
+
+describe('Lab access and request correlation', () => {
+  it('disables simulation routes unless LAB_MODE is explicitly enabled', async () => {
+    const res = await request(app).get('/simulations/stats');
+    expect(res.status).toBe(404);
+  });
+  it('returns the request id to the caller', async () => {
+    const res = await request(app).get('/health').set('x-request-id', 'integration-recovery');
+    expect(res.headers['x-request-id']).toBe('integration-recovery');
+  });
+});

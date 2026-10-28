@@ -52,7 +52,8 @@ Write-Host "Panggilan normal ke /health dan /policies/1 sekarang akan menunggu d
 
 $autocannonCmd = "autocannon -c 10 -d $TrafficDuration -p 10 -m GET $TargetUrl/health"
 Write-Host "Menjalankan: $autocannonCmd`n" -ForegroundColor DarkGray
-Invoke-Expression $autocannonCmd
+& autocannon -c 10 -d $TrafficDuration -p 10 -m GET $TargetUrl/health
+if ($LASTEXITCODE -ne 0) { throw 'autocannon failed' }
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan
 Write-Host "  Injeksi Selesai. Sistem sekarang dalam kondisi INSIDEN!" -ForegroundColor Red

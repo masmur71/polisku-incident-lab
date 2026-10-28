@@ -3,13 +3,13 @@
   Injeksi Insiden 4: Disk Full / Unrotated Debug Logs (INC-004)
 .DESCRIPTION
   Mensimulasikan kebocoran logging debug tanpa rotasi yang memakan kapasitas disk,
-  menyebabkan akumulasi file log besar di /app/logs/audit-debug.log, dan menganalisis
+  menyebabkan akumulasi file log besar di /incident-disk/audit-debug.log, dan menganalisis
   ketiadaan konfigurasi rotasi log Docker (max-size/max-file).
 #>
 
 param(
     [string]$TargetUrl = "http://localhost:3000",
-    [int]$MegabytesToFill = 150
+    [int]$MegabytesToFill = 28
 )
 
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -22,6 +22,7 @@ try {
     $initialStats = Invoke-RestMethod -Uri "$TargetUrl/simulations/disk-stats" -TimeoutSec 3
     Write-Host "Status Log Awal : $($initialStats.fileSizeMb) MB (Exists: $($initialStats.exists))" -ForegroundColor Green
     docker exec polisku-app-1 df -h /app
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
 } catch {
     Write-Error "Gagal menghubungi $TargetUrl. Pastikan container app berjalan."
     exit 1
@@ -40,18 +41,22 @@ Write-Host "  Ukuran File: $($res.fileSizeMb) MB" -ForegroundColor Magenta
 Write-Host "`n[3/4] Melakukan diagnosis kapasitas disk dan file terbesar via CLI..." -ForegroundColor Cyan
 Write-Host "`n>> Perintah: df -h /app" -ForegroundColor DarkGray
 docker exec polisku-app-1 df -h /app
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
 
-Write-Host "`n>> Perintah: du -sh /app/logs/*" -ForegroundColor DarkGray
-docker exec polisku-app-1 du -sh /app/logs/audit-debug.log
+Write-Host "`n>> Perintah: du -sh /incident-disk/audit-debug.log" -ForegroundColor DarkGray
+docker exec polisku-app-1 du -sh /incident-disk/audit-debug.log
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
 
 Write-Host "`n>> Perintah: docker inspect LogConfig (Cek rotasi log Docker)" -ForegroundColor DarkGray
 docker inspect --format '{{json .HostConfig.LogConfig}}' polisku-app-1
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
 
 # 4. Beri trafik ke aplikasi
 Write-Host "`n[4/4] Memberikan beban trafik normal sembari memantau disk..." -ForegroundColor Cyan
 $autocannonCmd = "autocannon -c 10 -d 10 -p 5 $TargetUrl/health"
 Write-Host "Menjalankan: $autocannonCmd`n" -ForegroundColor DarkGray
-Invoke-Expression $autocannonCmd
+& autocannon -c 10 -d 10 -p 5 $TargetUrl/health
+if ($LASTEXITCODE -ne 0) { throw 'autocannon failed' }
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan
 Write-Host "  Injeksi Insiden 4 Selesai!" -ForegroundColor Red

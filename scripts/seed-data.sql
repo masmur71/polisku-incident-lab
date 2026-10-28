@@ -1,5 +1,5 @@
 -- PolisKu Seed Data
--- Generates: 100K customers, ~200K policies, ~500K claims, ~1M premium_payments
+-- Generates: 100K customers, ~200K policies, 400K claims, ~1M premium_payments
 
 -- ===== CUSTOMERS (100,000) =====
 INSERT INTO customers (full_name, email, phone, date_of_birth, address)
@@ -25,7 +25,7 @@ SELECT
 FROM customers c
 CROSS JOIN generate_series(1, 2) AS s;
 
--- ===== CLAIMS (~500,000) =====
+-- ===== CLAIMS (400,000) =====
 INSERT INTO claims (policy_id, claim_type, description, amount, status, filed_at, resolved_at)
 SELECT
     p.id,

@@ -54,12 +54,14 @@ for ($i = 1; $i -le $Iterations; $i++) {
 Write-Host "`n[3/4] Mengirimkan trafik normal sembari mengamati latensi dan GC activity..." -ForegroundColor Cyan
 $autocannonCmd = "autocannon -c 20 -d 15 -p 5 $TargetUrl/policies/1"
 Write-Host "Menjalankan: $autocannonCmd`n" -ForegroundColor DarkGray
-Invoke-Expression $autocannonCmd
+& autocannon -c 20 -d 15 -p 5 $TargetUrl/policies/1
+if ($LASTEXITCODE -ne 0) { throw 'autocannon failed' }
 
 # 4. Ambil Heap Snapshot dari V8 Engine via signal SIGUSR2
 Write-Host "`n[4/4] Memicu V8 Heap Snapshot via SIGUSR2 ke container Node.js..." -ForegroundColor Yellow
 try {
     docker kill --signal=SIGUSR2 polisku-app-1
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
     Write-Host "Sinyal SIGUSR2 berhasil dikirim ke polisku-app-1. V8 Heap Snapshot sedang digenerate." -ForegroundColor Green
     Start-Sleep -Seconds 2
 } catch {

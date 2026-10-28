@@ -1,10 +1,11 @@
+#Requires -Version 7.0
 <#
 .SYNOPSIS
   Injeksi Insiden 5: Downstream Timeout & Socket Starvation (INC-005)
 .DESCRIPTION
   Memanggil layanan eksternal rekanan (mock partner gateway) yang lambat (delay 12s)
   tanpa konfigurasi timeout, memicu penumpukan in-flight request, lonjakan latensi masal,
-  dan kehabisan socket. Kemudian memverifikasi pemulihan menggunakan AbortController timeout & fallback.
+  dan kehabisan socket. Kemudian memverifikasi pemulihan menggunakan AbortController timeout.
 #>
 
 param(
@@ -33,19 +34,21 @@ Write-Host "Setiap request akan menggantung selama 12 detik menunggu downstream 
 
 $autocannonCmd = "autocannon -c $Connections -d $Duration -p 1 $TargetUrl/simulations/external-claim-verification"
 Write-Host "Menjalankan: $autocannonCmd`n" -ForegroundColor DarkGray
-Invoke-Expression $autocannonCmd
+& autocannon -c $Connections -d $Duration -p 1 $TargetUrl/simulations/external-claim-verification
+if ($LASTEXITCODE -ne 0) { throw 'autocannon failed' }
 
 # 3. Ambil metrik in-flight requests saat request sedang menggantung
 Write-Host "`n[3/4] Mengambil metrik in-flight requests saat penumpukan..." -ForegroundColor Cyan
 $inFlightMetric = curl.exe -s "$TargetUrl/metrics" | Select-String "polisku_http_in_flight_requests"
 Write-Host "In-Flight Requests: $inFlightMetric" -ForegroundColor Magenta
 
-# 4. Uji pemulihan menggunakan Timeout (AbortController 2000ms) dan Fallback (HTTP 202)
-Write-Host "`n[4/4] Menguji pemulihan dengan Timeout 2000ms & Fallback HTTP 202..." -ForegroundColor Cyan
+# 4. Uji pemulihan menggunakan Timeout (AbortController 2000ms) dan HTTP 504
+Write-Host "`n[4/4] Menguji pemulihan dengan Timeout 2000ms & HTTP 504 (no claim queued)..." -ForegroundColor Cyan
 $testUrl = "$TargetUrl/simulations/external-claim-verification?withTimeout=true&timeoutMs=2000"
 Write-Host "Memanggil: $testUrl" -ForegroundColor DarkGray
-$recoveryRes = Invoke-RestMethod -Uri $testUrl -TimeoutSec 5
-Write-Host "Hasil Fallback: $($recoveryRes.status) - $($recoveryRes.message)" -ForegroundColor Green
+$recoveryRes = Invoke-WebRequest -Uri $testUrl -TimeoutSec 5 -SkipHttpErrorCheck
+if ($recoveryRes.StatusCode -ne 504) { throw 'Expected HTTP 504' }
+Write-Host "Hasil Fallback: $($recoveryRes.StatusCode) - $($recoveryRes.Content)" -ForegroundColor Green
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan
 Write-Host "  Injeksi & Verifikasi Insiden 5 Selesai!" -ForegroundColor Green

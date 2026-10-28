@@ -21,6 +21,7 @@ Write-Host "==========================================================" -Foregro
 Write-Host "`n[1/3] Memastikan tidak ada index pada claims(status)..." -ForegroundColor Cyan
 try {
     docker exec polisku-postgres-1 psql -U postgres -d poliskudb -c "DROP INDEX IF EXISTS idx_claims_status; DROP INDEX IF EXISTS idx_claims_status_filed_at;"
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
     Write-Host "Index pada claims.status berhasil dipastikan nihil." -ForegroundColor Green
 } catch {
     Write-Host "Peringatan saat memeriksa index: $($_.Exception.Message)" -ForegroundColor Yellow
@@ -29,12 +30,14 @@ try {
 # 2. Ambil EXPLAIN ANALYZE query lambat (Sequential Scan)
 Write-Host "`n[2/3] Mengecek execution plan (EXPLAIN ANALYZE) sebelum indexing..." -ForegroundColor Cyan
 docker exec polisku-postgres-1 psql -U postgres -d poliskudb -c "EXPLAIN ANALYZE SELECT id, policy_id, claim_type, description, amount, status, filed_at, resolved_at FROM claims WHERE status = 'PENDING' ORDER BY filed_at DESC LIMIT 100;"
+if ($LASTEXITCODE -ne 0) { throw 'Docker command failed' }
 
 # 3. Jalankan uji beban trafik pada endpoint GET /claims?status=PENDING
 Write-Host "`n[3/3] Memberikan beban trafik masal ke GET /claims?status=PENDING ($Connections connections, ${Duration}s)..." -ForegroundColor Yellow
 $autocannonCmd = "autocannon -c $Connections -d $Duration -p 5 $TargetUrl/claims?status=PENDING"
 Write-Host "Menjalankan: $autocannonCmd`n" -ForegroundColor DarkGray
-Invoke-Expression $autocannonCmd
+& autocannon -c $Connections -d $Duration -p 5 $TargetUrl/claims?status=PENDING
+if ($LASTEXITCODE -ne 0) { throw 'autocannon failed' }
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan
 Write-Host "  Injeksi Insiden 3 Selesai!" -ForegroundColor Red

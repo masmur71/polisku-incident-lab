@@ -1,0 +1,59 @@
+rule_files:
+  - /etc/prometheus/alert.rules.yml
+evaluation_interval: 5s
+tests:
+  - interval: 5s
+    input_series:
+      - series: polisku_incident_disk_size_bytes
+        values: '33554432+0x30'
+      - series: polisku_incident_disk_avail_bytes
+        values: '2097152+0x30'
+      - series: polisku_nodejs_heap_size_used_bytes
+        values: '90+0x30'
+      - series: polisku_heap_limit_bytes
+        values: '100+0x30'
+      - series: 'up{job="polisku-app"}'
+        values: '0+0x30'
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: DiskSpaceUsageAbove80
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations:
+              summary: Disk space usage above 80%
+              description: Dedicated lab filesystem usage has exceeded 80% capacity.
+      - eval_time: 2m
+        alertname: HighHeapMemoryUsage
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations:
+              summary: Node.js Heap memory usage above 85%
+              description: App memory usage has exceeded 85% of V8 heap limit for more than 1 minute.
+      - eval_time: 2m
+        alertname: ApplicationDown
+        exp_alerts:
+          - exp_labels: {severity: critical, job: polisku-app}
+            exp_annotations:
+              summary: Application metrics target is unreachable
+  - interval: 5s
+    input_series:
+      - series: polisku_incident_disk_size_bytes
+        values: '33554432+0x30'
+      - series: polisku_incident_disk_avail_bytes
+        values: '33554432+0x30'
+      - series: polisku_nodejs_heap_size_used_bytes
+        values: '20+0x30'
+      - series: polisku_heap_limit_bytes
+        values: '100+0x30'
+      - series: 'up{job="polisku-app"}'
+        values: '1+0x30'
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: DiskSpaceUsageAbove80
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: HighHeapMemoryUsage
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: ApplicationDown
+        exp_alerts: []

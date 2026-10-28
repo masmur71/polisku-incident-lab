@@ -15,18 +15,18 @@ import { register } from '../metrics';
 const router = Router();
 
 // GET /metrics (Prometheus scrape endpoint)
-router.get('/metrics', async (_req: Request, res: Response) => {
+router.get('/metrics', async (req: Request, res: Response) => {
   try {
     res.set('Content-Type', register.contentType);
     res.end(await register.metrics());
   } catch (err) {
-    logger.error({ err }, 'Failed to generate metrics');
+    req.log.error({ err }, 'Failed to generate metrics');
     res.status(500).end();
   }
 });
 
 // GET /health
-router.get('/health', async (_req: Request, res: Response) => {
+router.get('/health', async (req: Request, res: Response) => {
   try {
     const result = await pool.query('SELECT NOW() as time');
     res.json({
@@ -35,7 +35,7 @@ router.get('/health', async (_req: Request, res: Response) => {
       uptime: process.uptime(),
     });
   } catch (err) {
-    logger.error({ err }, 'Health check failed');
+    req.log.error({ err }, 'Health check failed');
     res.status(503).json({ status: 'error', message: 'Database unreachable' });
   }
 });
@@ -77,7 +77,7 @@ router.get('/policies/:id', async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    logger.error({ err, policyId: id }, 'Failed to fetch policy');
+    req.log.error({ err, policyId: id }, 'Failed to fetch policy');
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -115,7 +115,7 @@ router.post('/claims', async (req: Request, res: Response) => {
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    logger.error({ err, policyId }, 'Failed to create claim');
+    req.log.error({ err, policyId }, 'Failed to create claim');
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -143,7 +143,7 @@ router.get('/claims', async (req: Request, res: Response) => {
       claims: result.rows,
     });
   } catch (err) {
-    logger.error({ err, status }, 'Failed to fetch claims');
+    req.log.error({ err, status }, 'Failed to fetch claims');
     res.status(500).json({ error: 'Internal server error' });
   }
 });

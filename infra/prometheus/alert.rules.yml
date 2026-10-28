@@ -11,13 +11,13 @@ groups:
           description: "HTTP 5xx error rate is currently at {{ $value | printf \"%.2f\" }}% over the last 2 minutes."
 
       - alert: HighHeapMemoryUsage
-        expr: (polisku_nodejs_heap_size_used_bytes / polisku_nodejs_heap_size_total_bytes) * 100 > 85
+        expr: (polisku_nodejs_heap_size_used_bytes / polisku_heap_limit_bytes) * 100 > 85
         for: 1m
         labels:
           severity: warning
         annotations:
           summary: "Node.js Heap memory usage above 85%"
-          description: "App memory usage has exceeded 85% of allocated heap for more than 1 minute."
+          description: "App memory usage has exceeded 85% of V8 heap limit for more than 1 minute."
 
       - alert: DatabasePoolExhausted
         expr: polisku_pg_pool_waiting_connections > 0
@@ -29,10 +29,24 @@ groups:
           description: "{{ $value }} requests are queued waiting for a database connection."
 
       - alert: DiskSpaceUsageAbove80
-        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 80
+        expr: (1 - (polisku_incident_disk_avail_bytes / polisku_incident_disk_size_bytes)) * 100 > 80
         for: 1m
         labels:
           severity: warning
         annotations:
           summary: "Disk space usage above 80%"
-          description: "Storage filesystem usage has exceeded 80% capacity."
+          description: "Dedicated lab filesystem usage has exceeded 80% capacity."
+
+      - alert: ApplicationDown
+        expr: up{job="polisku-app"} == 0
+        for: 15s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application metrics target is unreachable"
+      - alert: DownstreamTimeout
+        expr: increase(polisku_downstream_requests_total{outcome="timeout"}[2m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Partner verification exceeded the configured deadline"

@@ -1,22 +1,14 @@
 import { Router, Request, Response } from 'express';
 import { PoolClient } from 'pg';
 import fs from 'fs';
-import path from 'path';
+import { debugLogPath, diskStats } from '../disk';
+import { downstreamDuration, downstreamRequests } from '../metrics';
 import pool, { getPoolStats } from '../db';
 import logger from '../logger';
 
 const router = Router();
 
-const LOG_DIR = path.resolve(__dirname, '../../logs');
-const DEBUG_LOG_PATH = path.join(LOG_DIR, 'audit-debug.log');
-
-if (!fs.existsSync(LOG_DIR)) {
-  try {
-    fs.mkdirSync(LOG_DIR, { recursive: true });
-  } catch {
-    // ignore
-  }
-}
+const DEBUG_LOG_PATH = debugLogPath;
 
 // Store leaked connections so they can be monitored and optionally released
 const leakedClients: PoolClient[] = [];
@@ -201,8 +193,19 @@ router.post('/fill-disk', (req: Request, res: Response) => {
   const repeatCount = Math.floor(1024 * 1024 / chunkLine.length);
   const oneMbChunk = chunkLine.repeat(repeatCount);
 
-  for (let i = 0; i < mb; i++) {
-    fs.appendFileSync(DEBUG_LOG_PATH, oneMbChunk);
+  // Refuse host-disk filling: only the bounded Compose tmpfs is eligible.
+  const disk = diskStats();
+  if (!process.env.INCIDENT_DISK_DIR || disk.sizeBytes > 64 * 1024 * 1024) {
+    res.status(409).json({ error: 'Disk injection requires a dedicated filesystem <=64 MiB' });
+    return;
+  }
+  try {
+    for (let i = 0; i < mb; i++) fs.appendFileSync(DEBUG_LOG_PATH, oneMbChunk);
+  } catch (err: any) {
+    if (err.code !== 'ENOSPC') throw err;
+    logger.error({ code: err.code }, 'Incident filesystem full; business database is unaffected');
+    res.status(507).json({ error: 'ENOSPC', disk: diskStats() });
+    return;
   }
 
   const stat = fs.statSync(DEBUG_LOG_PATH);
@@ -229,6 +232,7 @@ router.get('/disk-stats', (_req: Request, res: Response) => {
     logPath: DEBUG_LOG_PATH,
     fileSizeMb,
     exists: fs.existsSync(DEBUG_LOG_PATH),
+    ...diskStats(),
   });
 });
 
@@ -270,39 +274,29 @@ router.get('/downstream/partner-api', async (req: Request, res: Response) => {
  */
 router.get('/external-claim-verification', async (req: Request, res: Response) => {
   const withTimeout = req.query.withTimeout === 'true';
-  const timeoutMs = parseInt(req.query.timeoutMs as string, 10) || 2000;
-  const partnerUrl = `http://localhost:${process.env.PORT || 3000}/simulations/downstream/partner-api?delay=12000`;
-
-  logger.info({ withTimeout, timeoutMs }, 'Calling external downstream service');
-
-  if (!withTimeout) {
-    // BUGGY: No timeout specified! Hangs for 12 seconds
-    try {
-      const response = await fetch(partnerUrl);
-      const data = await response.json();
-      res.json({ status: 'completed', data });
-    } catch (err: any) {
-      logger.error({ err: err?.message }, 'Failed calling downstream');
-      res.status(504).json({ error: 'Gateway timeout / Downstream failure' });
-    }
-  } else {
-    // FIXED: Circuit breaker / Timeout with graceful fallback
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-
-      const response = await fetch(partnerUrl, { signal: controller.signal });
-      clearTimeout(timer);
-      const data = await response.json();
-      res.json({ status: 'completed', data });
-    } catch (err: any) {
-      logger.warn({ timeoutMs }, 'Downstream timeout triggered - falling back to async manual review');
-      // Fallback: 202 Accepted with async review queue
-      res.status(202).json({
-        status: 'DEFERRED_TO_MANUAL_REVIEW',
-        message: 'External gateway unresponsive within 2000ms. Claim queued for async reconciliation.',
-      });
-    }
+  const timeoutMs = Math.min(Math.max(Number(req.query.timeoutMs) || 2000, 100), 15000);
+  const partnerUrl = `http://127.0.0.1:${process.env.PORT || 3000}/simulations/downstream/partner-api?delay=12000`;
+  const controller = new AbortController();
+  const timer = withTimeout ? setTimeout(() => controller.abort(), timeoutMs) : undefined;
+  const started = process.hrtime.bigint();
+  let outcome = 'success';
+  try {
+    const response = await fetch(partnerUrl, { signal: controller.signal });
+    if (!response.ok) throw new Error(`Partner returned HTTP ${response.status}`);
+    const data = await response.json();
+    res.json({ status: 'completed', data });
+  } catch (err: any) {
+    outcome = controller.signal.aborted ? 'timeout' : 'error';
+    req.log.warn({ outcome, timeoutMs, err }, 'Partner verification failed; no claim was queued');
+    res.status(outcome === 'timeout' ? 504 : 502).json({
+      status: 'VERIFICATION_UNAVAILABLE',
+      queued: false,
+      message: 'Partner verification failed. No claim was accepted or queued by this simulation.',
+    });
+  } finally {
+    if (timer) clearTimeout(timer);
+    downstreamRequests.inc({ outcome });
+    downstreamDuration.observe({ outcome }, Number(process.hrtime.bigint() - started) / 1e9);
   }
 });
 

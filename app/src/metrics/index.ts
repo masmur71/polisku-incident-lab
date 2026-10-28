@@ -1,6 +1,7 @@
 import client from 'prom-client';
 import { Request, Response, NextFunction } from 'express';
 import { getPoolStats } from '../db';
+import { diskStats } from '../disk';
 
 const register = new client.Registry();
 
@@ -62,6 +63,25 @@ export const httpInFlightRequests = new client.Gauge({
 });
 register.registerMetric(httpInFlightRequests);
 
+export const downstreamRequests = new client.Counter({
+  name: 'polisku_downstream_requests_total', help: 'Completed partner calls by outcome', labelNames: ['outcome'], registers: [register],
+});
+export const downstreamDuration = new client.Histogram({
+  name: 'polisku_downstream_duration_seconds', help: 'Partner call duration including response body', labelNames: ['outcome'],
+  buckets: [0.1, 0.5, 1, 2, 2.5, 5, 10, 15], registers: [register],
+});
+const abortedRequests = new client.Counter({
+  name: 'polisku_http_aborted_requests_total', help: 'Client disconnected before response finished', registers: [register],
+});
+for (const [name, field] of [['size', 'sizeBytes'], ['avail', 'availableBytes']] as const) {
+  new client.Gauge({ name: `polisku_incident_disk_${name}_bytes`, help: 'Dedicated incident filesystem bytes', registers: [register],
+    collect() { this.set(diskStats()[field]); },
+  });
+}
+new client.Gauge({ name: 'polisku_heap_limit_bytes', help: 'V8 heap limit in bytes', registers: [register],
+  collect() { this.set(require('v8').getHeapStatistics().heap_size_limit); },
+});
+
 // Middleware to track HTTP metrics
 export const metricsMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (req.path === '/metrics') {
@@ -74,6 +94,7 @@ export const metricsMiddleware = (req: Request, res: Response, next: NextFunctio
 
   const onComplete = () => {
     if (!decremented) {
+      if (!res.writableFinished) abortedRequests.inc();
       httpInFlightRequests.dec();
       decremented = true;
     }
@@ -85,7 +106,7 @@ export const metricsMiddleware = (req: Request, res: Response, next: NextFunctio
     const diff = process.hrtime(start);
     const durationInSeconds = diff[0] + diff[1] / 1e9;
 
-    let route = req.path;
+    let route = 'unmatched';
     if (req.route?.path) {
       route = (req.baseUrl || '') + req.route.path;
     } else if (req.path.startsWith('/policies/')) {

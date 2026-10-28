@@ -1,5 +1,6 @@
 import app from './app';
 import logger from './logger';
+import pool from './db';
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
@@ -10,7 +11,8 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 // Graceful shutdown
 const shutdown = (signal: string) => {
   logger.info({ signal }, 'Received shutdown signal');
-  server.close(() => {
+  server.close(async () => {
+    await pool.end();
     logger.info('HTTP server closed');
     process.exit(0);
   });

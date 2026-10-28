@@ -20,11 +20,16 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.setHeader('x-request-id', String(req.id));
+  next();
+});
+
 // Prometheus metrics middleware
 app.use(metricsMiddleware);
 
 // Routes
 app.use(routes);
-app.use('/simulations', simulationsRouter);
+if (process.env.LAB_MODE === 'true') app.use('/simulations', simulationsRouter);
 
 export default app;
